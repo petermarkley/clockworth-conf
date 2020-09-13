@@ -418,7 +418,7 @@ class cwconf {
 	
 	loadDefault() {
 		// get the contents of the json
-		let [ok, contents] = GLib.file_get_contents('/home/peter/projects/audio/clockworth/system/config.json');
+		let [ok, contents] = GLib.file_get_contents( GLib.get_current_dir() + '/default.json' );
 		if (ok) {
 			this.conf = JSON.parse(ByteArray.toString(contents));
 		}
