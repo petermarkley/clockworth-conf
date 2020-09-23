@@ -352,6 +352,7 @@ class cwconf {
 		
 		//sequence view
 		this.flatSelection = Array();
+		this.flatFilters = Array();
 		for (let i=1; i<=10; i++) {
 			let div = new Gtk.Grid({
 				row_spacing: 2 });
@@ -365,8 +366,8 @@ class cwconf {
 				expand: false,
 				margin_left: 10 });
 			div.attach (label, 0, 0, 1, 1);
-			let filter = this._tree_flat.filter_new(null);
-			filter.set_visible_func(function (model,iter) {
+			this.flatFilters[i] = this._tree_flat.filter_new(null);
+			this.flatFilters[i].set_visible_func(function (model,iter) {
 				if (model.get_value(iter,3) == i) {
 					return true;
 				} else {
@@ -375,7 +376,7 @@ class cwconf {
 			});
 			let view = new Gtk.TreeView({
 				hexpand: true,
-				model: filter,
+				model: this.flatFilters[i],
 				enable_grid_lines: false,
 				enable_tree_lines: false,
 				headers_visible: false,
@@ -464,7 +465,32 @@ class cwconf {
 	
 	//selection functions
 	_onTreeSelectionChanged() {
+		//get navigation data
 		let [ isSelected, model, iter ] = this.treeSelection.get_selected();
+		
+		//update opposing selection
+		if (isSelected) {
+			let slot = model.get_value(iter,4);
+			let num = model.get_value(iter,7);
+			for (let i=1; i<=10; i++) {
+				if (num >= 0 && i == slot) {
+					let [ok,iter_f] = this.flatFilters[i].convert_child_iter_to_iter(this._iters_flat[num]);
+					if (ok) {
+						this.flatSelection[i].select_iter(iter_f);
+					} else {
+						this.flatSelection[i].unselect_all();
+					}
+				} else {
+					this.flatSelection[i].unselect_all();
+				}
+			}
+		} else {
+			for (let i=1; i<=10; i++) {
+				this.flatSelection[i].unselect_all();
+			}
+		}
+		
+		//update detail view
 		this._detSetState(isSelected,model,iter);
 	}
 	_onFlatSelectionChanged(i) {
