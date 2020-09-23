@@ -75,25 +75,28 @@ class cwconf {
 			this.application.quit();
 			return false;
 		}
-		let iter = null;
+		let iter1 = null;
+		let iter2 = null;
 		let label = (path.length>0?path+" \u2192 "+data.label:data.label);
 		let viable = true;
 		if (parent) viable = model.get_value(parent,2) && model.get_value(parent,3);
 		switch (data.type) {
 			case "group":
-				iter = model.append(parent);
-				model.set(iter,[0,1,2,3,4,5,6],[true,data.label,data.enable,viable,0,label,path]);
+				iter1 = model.append(parent);
+				model.set(iter1,[0,1,2,3,4,5,6,7],[true,data.label,data.enable,viable,0,label,path,-1]);
 				for (let i=0; i < data.members.length; i++) {
-					if (!this._buildUI_tree(data.members[i],model,flat,iter,label,depth+1))
+					if (!this._buildUI_tree(data.members[i],model,flat,iter1,label,depth+1))
 						return false;
 				}
 			break;
 			case "event":
-				iter = model.append(parent);
-				model.set(iter,[0,1,2,3,4,5,6],[false,data.label,data.enable,viable,data.sequence,label,path]);
-				
-				iter = flat.append();
-				flat.set(iter,[0,1,2,3,4],[data.label,data.enable,viable,data.sequence,label]);
+				iter1 = model.append(parent);
+				iter2 = flat.append();
+				this._iters_tree[this._iters_num] = iter1;
+				this._iters_flat[this._iters_num] = iter2;
+				model.set(iter1,[0,1,2,3,4,5,6,7],[false,data.label,data.enable,viable,data.sequence,label,path,this._iters_num]);
+				flat.set(iter2,[0,1,2,3,4,5],[data.label,data.enable,viable,data.sequence,label,this._iters_num]);
+				this._iters_num++;
 			break;
 		}
 		return true;
@@ -194,14 +197,19 @@ class cwconf {
 			GObject.TYPE_BOOLEAN,   //viable?
 			GObject.TYPE_INT,       //sequence slot
 			GObject.TYPE_STRING,    //path with label
-			GObject.TYPE_STRING ]); //path without label
+			GObject.TYPE_STRING,    //path without label
+			GObject.TYPE_INT ]);    //index to iterator in flat view
 		this._tree_flat = new Gtk.ListStore();
 		this._tree_flat.set_column_types ([
 			GObject.TYPE_STRING,    //label
 			GObject.TYPE_BOOLEAN,   //enable?
 			GObject.TYPE_BOOLEAN,   //viable?
 			GObject.TYPE_INT,       //sequence slot
-			GObject.TYPE_STRING ]); //path with label
+			GObject.TYPE_STRING,    //path with label
+			GObject.TYPE_INT ]);    //index to iterator in tree view
+		this._iters_tree = Array();
+		this._iters_flat = Array();
+		this._iters_num = 0;
 		for (let i=0; i < this.conf.events.length; i++) {
 			this._buildUI_tree(this.conf.events[i],this._tree,this._tree_flat,null,"",0);
 		}
@@ -343,6 +351,7 @@ class cwconf {
 		this._seqGrid.attach (this._sscroll, 0, 1, 1, 1);
 		
 		//sequence view
+		this.flatSelection = Array();
 		for (let i=1; i<=10; i++) {
 			let div = new Gtk.Grid({
 				row_spacing: 2 });
@@ -388,6 +397,9 @@ class cwconf {
 			view.expand_all();
 			view.set_show_expanders(false);
 			div.attach (view, 0, 1, 1, 1);
+			this.flatSelection[i] = view.get_selection();
+			this.flatSelection[i].connect ('changed', this._onFlatSelectionChanged.bind(this));
+			this.flatSelection[i].set_mode(Gtk.SelectionMode.SINGLE);
 		}
 		
 		//sequence toolbar
@@ -454,6 +466,10 @@ class cwconf {
 	_onTreeSelectionChanged() {
 		let [ isSelected, model, iter ] = this.treeSelection.get_selected();
 		this._detSetState(isSelected,model,iter);
+	}
+	_onFlatSelectionChanged() {
+		let i = 1; //FIXME
+		let [ isSelected, model, iter ] = this.flatSelection[i].get_selected();
 	}
 };
 
