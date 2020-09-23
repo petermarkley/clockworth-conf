@@ -398,7 +398,7 @@ class cwconf {
 			view.set_show_expanders(false);
 			div.attach (view, 0, 1, 1, 1);
 			this.flatSelection[i] = view.get_selection();
-			this.flatSelection[i].connect ('changed', this._onFlatSelectionChanged.bind(this));
+			this.flatSelection[i].connect ('changed', this._onFlatSelectionChanged.bind(this,i));
 			this.flatSelection[i].set_mode(Gtk.SelectionMode.SINGLE);
 		}
 		
@@ -467,9 +467,9 @@ class cwconf {
 		let [ isSelected, model, iter ] = this.treeSelection.get_selected();
 		this._detSetState(isSelected,model,iter);
 	}
-	_onFlatSelectionChanged() {
-		let i = 1; //FIXME
+	_onFlatSelectionChanged(i) {
 		let [ isSelected, model, iter ] = this.flatSelection[i].get_selected();
+		print("slot "+i);
 	}
 };
 
