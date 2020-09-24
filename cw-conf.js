@@ -602,6 +602,7 @@ class cwconf {
 				let iter = this.flatFilters[slot].convert_iter_to_child_iter(iter_f);
 				let num = model.get_value(iter,5);
 				if (num >= 0) {
+					this._treeView.expand_to_path(this._tree.get_path(this._iters_tree[num]));
 					this.treeSelection.select_iter(this._iters_tree[num]);
 				}
 			} else {
