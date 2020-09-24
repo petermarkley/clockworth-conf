@@ -540,15 +540,16 @@ class cwconf {
 	
 	//selection functions
 	_onTreeSelectionChanged() {
+		//get navigation data
+		let [ isSelected, model, iter ] = this.treeSelection.get_selected();
+		
+		let slot = 0;
+		let flatSelected = false;
 		if (this._signalValve.stat != this._signalValve.enm.FLOW_LEFT) {
 			//close signal valve from flat view
 			this._signalValve.stat = this._signalValve.enm.FLOW_RIGHT;
-			//get navigation data
-			let [ isSelected, model, iter ] = this.treeSelection.get_selected();
 			
 			//update opposing selection
-			let slot = 0;
-			let flatSelected = false;
 			if (isSelected) {
 				slot = model.get_value(iter,4);
 				let num = model.get_value(iter,7);
@@ -571,16 +572,16 @@ class cwconf {
 				}
 			}
 			
-			//update detail view
-			this._detSetState(isSelected,model,iter);
-			
-			//update toolbars
-			this._treeBarSetState(isSelected,model,iter);
-			this._seqBarSetState(flatSelected,slot);
-			
 			//open signal valve
 			this._signalValve.stat = this._signalValve.enm.OPEN;
 		}
+		
+		//update detail view
+		this._detSetState(isSelected,model,iter);
+		
+		//update toolbars
+		this._treeBarSetState(isSelected,model,iter);
+		this._seqBarSetState(flatSelected,slot);
 	}
 	_onFlatSelectionChanged(slot) {
 		if (this._signalValve.stat == this._signalValve.enm.OPEN || (this._signalValve.stat == this._signalValve.enm.FLOW_LEFT && this._signalValve.slot == slot)) {
