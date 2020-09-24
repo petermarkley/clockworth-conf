@@ -70,7 +70,49 @@ class cwconf {
 	}
 	
 	_treeBarSetState(isSelected,model,iter) {
-		
+		if (isSelected) {
+			//"add" button
+			this._tb1.sensitive = true;
+			//"remove" button
+			this._tb2.sensitive = true;
+			//"unindent" button
+			if (model.iter_parent(iter)[0]) {
+				this._tb3.sensitive = true;
+			} else {
+				this._tb3.sensitive = false;
+			}
+			//buttons pertaining to previous table row
+			let prev = iter.copy();
+			if (model.iter_previous(prev)) {
+				//"move up" button
+				this._tb5.sensitive = true;
+				//"indent" button
+				if (model.get_value(prev,0)) {
+					this._tb4.sensitive = true;
+				} else {
+					this._tb4.sensitive = false;
+				}
+			} else {
+				//"move up" button
+				this._tb5.sensitive = false;
+				//"indent" button
+				this._tb4.sensitive = false;
+			}
+			//"move down" button
+			let next = iter.copy();
+			if (model.iter_next(next)) {
+				this._tb6.sensitive = true;
+			} else {
+				this._tb6.sensitive = false;
+			}
+		} else {
+			this._tb1.sensitive = true; //we can always add a new node, even if there's no selection
+			this._tb2.sensitive = false;
+			this._tb3.sensitive = false;
+			this._tb4.sensitive = false;
+			this._tb5.sensitive = false;
+			this._tb6.sensitive = false;
+		}
 	}
 	
 	_seqBarSetState(isSelected,slot) {
