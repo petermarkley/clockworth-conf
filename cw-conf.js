@@ -69,6 +69,28 @@ class cwconf {
 		}
 	}
 	
+	_treeBarSetState(isSelected,model,iter) {
+		
+	}
+	
+	_seqBarSetState(isSelected,slot) {
+		if (isSelected && slot > 0 && slot <= 10) {
+			if (slot > 1) {
+				this._sb1.sensitive = true;
+			} else {
+				this._sb1.sensitive = false;
+			}
+			if (slot < 10) {
+				this._sb2.sensitive = true;
+			} else {
+				this._sb2.sensitive = false;
+			}
+		} else {
+			this._sb1.sensitive = false;
+			this._sb2.sensitive = false;
+		}
+	}
+	
 	_buildUI_tree(data, model, flat, parent, path, depth) {
 		if (depth > MAX_RECURSION_DEPTH) {
 			log("reached max recursion depth");
@@ -326,6 +348,7 @@ class cwconf {
 		this._tb6.homogenous = true;
 		this._treeBar.insert(this._tb6,-1);
 		this._tb6.connect('clicked',this._event_down.bind(this));
+		this._treeBarSetState(false,null,null);
 		
 		//sequence grid
 		this._seqGrid = new Gtk.Grid({
@@ -433,6 +456,7 @@ class cwconf {
 		this._sb2.homogenous = true;
 		this._seqBar.insert(this._sb2,-1);
 		this._sb2.connect('clicked',this._event_next.bind(this));
+		this._seqBarSetState(false,0);
 		
 		this._window.add (this._grid);
 		this._window.show_all();
@@ -481,14 +505,17 @@ class cwconf {
 			let [ isSelected, model, iter ] = this.treeSelection.get_selected();
 			
 			//update opposing selection
+			let slot = 0;
+			let flatSelected = false;
 			if (isSelected) {
-				let slot = model.get_value(iter,4);
+				slot = model.get_value(iter,4);
 				let num = model.get_value(iter,7);
 				for (let i=1; i<=10; i++) {
 					if (num >= 0 && i == slot) {
 						let [ok,iter_f] = this.flatFilters[i].convert_child_iter_to_iter(this._iters_flat[num]);
 						if (ok) {
 							this.flatSelection[i].select_iter(iter_f);
+							flatSelected = true;
 						} else {
 							this.flatSelection[i].unselect_all();
 						}
@@ -504,6 +531,10 @@ class cwconf {
 			
 			//update detail view
 			this._detSetState(isSelected,model,iter);
+			
+			//update toolbars
+			this._treeBarSetState(isSelected,model,iter);
+			this._seqBarSetState(flatSelected,slot);
 			
 			//open signal valve
 			this._signalValve.stat = this._signalValve.enm.OPEN;
