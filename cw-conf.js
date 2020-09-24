@@ -134,6 +134,15 @@ class cwconf {
 		style.add_class("frame_outer");
 		style.add_provider(this._css,Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
 		this._grid.attach (this._paned, 0, 1, 1, 1);
+		this._signalValve = {
+			stat: 0,
+			enm: {
+				OPEN: 0,
+				FLOW_RIGHT: 1,
+				FLOW_LEFT: 2
+			},
+			slot: 0
+		};
 		
 		//detail view
 		this._detGrid = new Gtk.Grid({ hexpand: true });
@@ -465,37 +474,81 @@ class cwconf {
 	
 	//selection functions
 	_onTreeSelectionChanged() {
-		//get navigation data
-		let [ isSelected, model, iter ] = this.treeSelection.get_selected();
-		
-		//update opposing selection
-		if (isSelected) {
-			let slot = model.get_value(iter,4);
-			let num = model.get_value(iter,7);
-			for (let i=1; i<=10; i++) {
-				if (num >= 0 && i == slot) {
-					let [ok,iter_f] = this.flatFilters[i].convert_child_iter_to_iter(this._iters_flat[num]);
-					if (ok) {
-						this.flatSelection[i].select_iter(iter_f);
+		if (this._signalValve.stat != this._signalValve.enm.FLOW_LEFT) {
+			//close signal valve from flat view
+			this._signalValve.stat = this._signalValve.enm.FLOW_RIGHT;
+			//get navigation data
+			let [ isSelected, model, iter ] = this.treeSelection.get_selected();
+			
+			//update opposing selection
+			if (isSelected) {
+				let slot = model.get_value(iter,4);
+				let num = model.get_value(iter,7);
+				for (let i=1; i<=10; i++) {
+					if (num >= 0 && i == slot) {
+						let [ok,iter_f] = this.flatFilters[i].convert_child_iter_to_iter(this._iters_flat[num]);
+						if (ok) {
+							this.flatSelection[i].select_iter(iter_f);
+						} else {
+							this.flatSelection[i].unselect_all();
+						}
 					} else {
 						this.flatSelection[i].unselect_all();
 					}
-				} else {
+				}
+			} else {
+				for (let i=1; i<=10; i++) {
 					this.flatSelection[i].unselect_all();
 				}
 			}
-		} else {
-			for (let i=1; i<=10; i++) {
-				this.flatSelection[i].unselect_all();
-			}
+			
+			//update detail view
+			this._detSetState(isSelected,model,iter);
+			
+			//open signal valve
+			this._signalValve.stat = this._signalValve.enm.OPEN;
 		}
-		
-		//update detail view
-		this._detSetState(isSelected,model,iter);
 	}
-	_onFlatSelectionChanged(i) {
-		let [ isSelected, model, iter ] = this.flatSelection[i].get_selected();
-		print("slot "+i);
+	_onFlatSelectionChanged(slot) {
+		if (this._signalValve.stat == this._signalValve.enm.OPEN || (this._signalValve.stat == this._signalValve.enm.FLOW_LEFT && this._signalValve.slot == slot)) {
+			//close signal valve from tree view
+			this._signalValve.stat = this._signalValve.enm.FLOW_RIGHT;
+			this._signalValve.slot = slot;
+			//get navigation data
+			let [ isSelected, model_f, iter_f ] = this.flatSelection[slot].get_selected();
+			
+			if (isSelected) {
+				//update selection in other flat slots
+				for (let i=1; i<=10; i++) {
+					if (i != slot) {
+						this.flatSelection[i].unselect_all();
+					}
+				}
+				//update opposing selection
+				let model = this.flatFilters[slot].get_model();
+				let iter = this.flatFilters[slot].convert_iter_to_child_iter(iter_f);
+				let num = model.get_value(iter,5);
+				if (num >= 0) {
+					this.treeSelection.select_iter(this._iters_tree[num]);
+				}
+			} else {
+				//on a signal from an empty flat selection, we may only unselect in tree view if no selection is found in a different flat slot
+				let found = false;
+				for (let i=1; i<=10; i++) {
+					if (i != slot) {
+						if (this.flatSelection[i].get_selected()[0]) {
+							found = true;
+						}
+					}
+				}
+				if (!found) {
+					this.treeSelection.unselect_all();
+				}
+			}
+			
+			//open signal valve
+			this._signalValve.stat = this._signalValve.enm.OPEN;
+		}
 	}
 };
 
