@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Clockworth Configurator</title>
+		<style>
+			body {
+				background-color: #363533;
+				background-image: url("img/clockworth-paper-bg.jpg");
+				background-position: top center;
+				background-repeat: no-repeat;
+				background-size: cover;
+				color: #b6b6b6;
+				font-family: Baskerville, serif;
+				padding: 0;
+				margin: 0;
+			}
+			a {
+				color: #fff;
+				text-decoration: none;
+			}
+			a:hover, a:active, a:focus {
+				color: #ddd;
+			}
+			main {
+				max-width: 800px;
+				margin: 16px auto;
+				background-color: #323232;
+				padding: 16px;
+				border-radius: 8px;
+				box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+			}
+			h1 {
+				font-family: "Brush Script MT", cursive;
+				font-size: 48px;
+				margin: 0;
+				text-align: center;
+				font-style: italic;
+			}
+			h2 {
+				text-align: center;
+				margin: 0 0 8px 0;
+				font-weight: normal;
+				font-size: 24px;
+				letter-spacing: 4px;
+			}
+			footer {
+				font-size: 1em;
+				font-style: italic;
+				color: rgba(255,255,255,0.4);
+				text-align: center;
+			}
+			footer a {
+				color: rgba(255,255,255,0.8);
+			}
+			footer a:hover, footer a:active, footer a:focus {
+				color: rgba(255,255,255,0.6);
+			}
+			.inset {
+				background-color: #2c2c2c;
+				box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+				padding: 8px;
+				border-radius: 4px;
+				overflow-y: scroll;
+			}
+		</style>
+	</head>
+	<body>
+		<main>
+			<div style="display:flex;flex-direction:column;align-items:center;margin-bottom:16px;">
+				<h1>Clockworth Configurator</h1>
+				<p>Widget for configuring <a href="https://github.com/petermarkley/clockworth">your own Clockworth robotic clock</a>.</p>
+				<img src="img/clockworth-photo-alpha-300px.png" alt="Clockworth" style="width:200px;height:auto;"/>
+			</div>
+			<div style="display:flex;flex-direction:row;gap:16px;margin-bottom:16px;">
+				<div style="width:100%;">
+					<h2>Chime Events</h2>
+					<div class="inset" style="height:300px;">
+						<p>Sed massa purus, egestas quis tristique ut, tempor at libero. Phasellus efficitur rhoncus convallis. Proin in leo venenatis, cursus lectus eu, placerat dolor. Vivamus nec metus eu diam convallis blandit non a augue. Etiam aliquam urna vel eros feugiat, a ullamcorper lacus tristique. Morbi a massa ut velit convallis porttitor ac fermentum libero. Sed in suscipit nunc, quis venenatis orci.</p>
+						<p> Pellentesque nec pulvinar velit, quis malesuada ex. Donec sit amet lacus quis neque faucibus semper. Donec bibendum faucibus massa eleifend dictum. Quisque eleifend congue neque. Etiam suscipit egestas dolor, id lobortis ipsum pharetra id. Phasellus fringilla diam et quam condimentum, a mattis ipsum elementum. Aliquam scelerisque congue arcu, ut dapibus diam tincidunt quis.</p>
+						<p>Vivamus dolor neque, pulvinar sit amet suscipit ut, tristique quis eros. Nullam sed orci in nisl volutpat pulvinar. Nullam ut tincidunt nunc. Nulla efficitur odio felis, eget mollis turpis finibus ac. Phasellus nec sem nibh. Etiam faucibus purus sit amet ornare bibendum. Sed sed scelerisque tellus. Nam id nunc porttitor, scelerisque augue nec, iaculis arcu. </p>
+					</div>
+				</div>
+				<div style="width:100%;">
+					<h2>Collision Sequence</h2>
+					<div class="inset" style="height:300px;">
+						<p>Pellentesque porttitor nisl in est sagittis, luctus semper tortor vehicula. Quisque quis lorem lorem. Fusce mattis luctus aliquet. Vestibulum dictum nibh at nibh sodales, at varius dolor fringilla. Morbi accumsan tellus mi, eu vestibulum orci pretium eu. Nam ante mauris, euismod ut laoreet at, dignissim nec tortor. Vivamus eu ex sodales, interdum nibh sit amet, tempus massa. Nullam lobortis a libero congue rutrum. Maecenas nisl ipsum, rhoncus et aliquet et, aliquet quis quam. Etiam aliquam vehicula tempus. Curabitur nec lacinia libero, ut malesuada nunc.</p>
+						<p> Vestibulum pharetra vulputate diam et maximus. Suspendisse consequat nibh vel interdum varius. Fusce non libero tincidunt, interdum turpis lobortis, vulputate orci. Suspendisse vitae dui augue. Integer efficitur tincidunt urna varius cursus. Aliquam vitae dui arcu. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Quisque tincidunt feugiat tristique. Nam interdum, lacus sit amet elementum sagittis, arcu ex tempor turpis, a mollis urna elit sit amet tortor. Quisque interdum eu justo non feugiat. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque finibus mi eu interdum gravida.</p>
+						<p>Nam ante leo, scelerisque ut dapibus in, imperdiet eget velit. Donec vitae metus id urna sodales condimentum non vitae turpis. Phasellus ut feugiat elit. Nunc sodales commodo consequat. Mauris felis tellus, tempor aliquet finibus sit amet, ullamcorper sit amet ipsum. Curabitur maximus libero non purus varius commodo. Curabitur pellentesque ac ex eget dignissim. Integer at semper enim. </p>
+					</div>
+				</div>
+			</div>
+			<div>
+				<p>(Event properties here.)</p>
+			</div>
+		</main>
+		<footer>
+			<p>Copyright &copy; 2023 by Peter Markley.<br>Code published <a href="https://github.com/petermarkley/clockworth-conf">on Github</a> under the <a href="https://www.gnu.org/licenses/lgpl-3.0.en.html">GNU Lesser General Public License v3.0</a>.</p>
+		</footer>
+	</body>
+</html>
