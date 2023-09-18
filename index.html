@@ -4,7 +4,7 @@
 		<title>Clockworth Configurator</title>
 		<style>
 			body {
-				background-color: #363533;
+				background-color: #393836;
 				background-image: url("img/clockworth-paper-bg.jpg");
 				background-position: top center;
 				background-repeat: no-repeat;
@@ -17,6 +17,7 @@
 			a {
 				color: #fff;
 				text-decoration: none;
+				cursor: pointer;
 			}
 			a:hover, a:active, a:focus {
 				color: #ddd;
@@ -43,6 +44,9 @@
 				font-size: 24px;
 				letter-spacing: 4px;
 			}
+			h3 {
+				margin: 0;
+			}
 			footer {
 				font-size: 1em;
 				font-style: italic;
@@ -61,6 +65,120 @@
 				padding: 8px;
 				border-radius: 4px;
 				overflow-y: scroll;
+				margin: 0 0 8px 0;
+			}
+			.toolbar {
+				display: flex;
+				flex-direction: row;
+				gap: 4px;
+			}
+			.toolbar button {
+				appearance: none;
+				border: none;
+				background-color: #393836;
+				color: #fff;
+				margin: 0;
+				width: 48px;
+				height: 40px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				border-radius: 4px;
+				box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+				cursor: pointer;
+			}
+			.toolbar button:hover, .toolbar button:focus {
+				background-color: #4d4d4c;
+			}
+			.toolbar button:active {
+				background-color: #393836;
+				box-shadow: 0 1px 2px rgba(0,0,0,1.0);
+				transform: translate( 0, 1px );
+			}
+			.toolbar button.leftmost {
+				border-bottom-left-radius: 8px;
+			}
+			.toolbar button.rightmost {
+				border-bottom-right-radius: 8px;
+			}
+			.properties_heading {
+				display: flex;
+				flex-direction: row;
+				justify-content: space-between;
+				border-bottom: 1px solid #4d4d4c;
+				padding-bottom: 16px;
+				flex-grow: 1;
+			}
+			#breadcrumb {
+				font-size: 12px;
+				font-weight: normal;
+			}
+			#properties_title {
+				appearance: none;
+				border: none;
+				background: none;
+				font-size: 19px;
+				font-weight: bold;
+				color: #b6b6b6;
+				font-family: inherit;
+				width: auto;
+			}
+			#properties_type {
+				font-weight: normal;
+				font-style: italic;
+			}
+			#properties {
+				min-height: 300px;
+			}
+			
+			/* input toggle */
+			.switch {
+				position: relative;
+				display: inline-block;
+				width: 60px;
+				height: 34px;
+			}
+			.switch input {
+				opacity: 0;
+				width: 0;
+				height: 0;
+			}
+			.slider {
+				position: absolute;
+				cursor: pointer;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background-color: #4d4d4c;
+				-webkit-transition: .4s;
+				transition: .4s;
+				border-radius: 34px;
+				box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
+			}
+			.slider:before {
+				position: absolute;
+				content: "";
+				height: 26px;
+				width: 26px;
+				left: 4px;
+				bottom: 4px;
+				background-color: #323232;
+				-webkit-transition: .4s;
+				transition: .4s;
+				border-radius: 50%;
+				box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+			}
+			input:checked + .slider {
+				background-color: #b6b6b6;
+			}
+			input:focus + .slider {
+				box-shadow: 0 0 1px #b6b6b6;
+			}
+			input:checked + .slider:before {
+				-webkit-transform: translateX(26px);
+				-ms-transform: translateX(26px);
+				transform: translateX(26px);
 			}
 		</style>
 	</head>
@@ -68,29 +186,68 @@
 		<main>
 			<div style="display:flex;flex-direction:column;align-items:center;margin-bottom:16px;">
 				<h1>Clockworth Configurator</h1>
-				<p>Widget for configuring <a href="https://github.com/petermarkley/clockworth">your own Clockworth robotic clock</a>.</p>
+				<p>Widget for configuring your own <a href="https://github.com/petermarkley/clockworth">Clockworth robotic clock</a>.</p>
 				<img src="img/clockworth-photo-alpha-300px.png" alt="Clockworth" style="width:200px;height:auto;"/>
 			</div>
-			<div style="display:flex;flex-direction:row;gap:16px;margin-bottom:16px;">
+			<div style="display:flex;flex-direction:row;gap:16px;margin-bottom:24px;">
 				<div style="width:100%;">
 					<h2>Chime Events</h2>
 					<div class="inset" style="height:300px;">
-						<p>Sed massa purus, egestas quis tristique ut, tempor at libero. Phasellus efficitur rhoncus convallis. Proin in leo venenatis, cursus lectus eu, placerat dolor. Vivamus nec metus eu diam convallis blandit non a augue. Etiam aliquam urna vel eros feugiat, a ullamcorper lacus tristique. Morbi a massa ut velit convallis porttitor ac fermentum libero. Sed in suscipit nunc, quis venenatis orci.</p>
-						<p> Pellentesque nec pulvinar velit, quis malesuada ex. Donec sit amet lacus quis neque faucibus semper. Donec bibendum faucibus massa eleifend dictum. Quisque eleifend congue neque. Etiam suscipit egestas dolor, id lobortis ipsum pharetra id. Phasellus fringilla diam et quam condimentum, a mattis ipsum elementum. Aliquam scelerisque congue arcu, ut dapibus diam tincidunt quis.</p>
-						<p>Vivamus dolor neque, pulvinar sit amet suscipit ut, tristique quis eros. Nullam sed orci in nisl volutpat pulvinar. Nullam ut tincidunt nunc. Nulla efficitur odio felis, eget mollis turpis finibus ac. Phasellus nec sem nibh. Etiam faucibus purus sit amet ornare bibendum. Sed sed scelerisque tellus. Nam id nunc porttitor, scelerisque augue nec, iaculis arcu. </p>
+						<ul id="chime_events"></ul>
+					</div>
+					<div class="toolbar">
+						<button id="toolbar_add" class="leftmost">
+							<span>+</span>
+						</button>
+						<button id="toolbar_remove">
+							<span>-</span>
+						</button>
+						<button id="toolbar_unindent">
+							<span>&larr;</span>
+						</button>
+						<button id="toolbar_indent">
+							<span>&rarr;</span>
+						</button>
+						<button id="toolbar_up">
+							<span>&uarr;</span>
+						</button>
+						<button id="toolbar_down" class="rightmost">
+							<span>&darr;</span>
+						</button>
 					</div>
 				</div>
 				<div style="width:100%;">
 					<h2>Collision Sequence</h2>
 					<div class="inset" style="height:300px;">
-						<p>Pellentesque porttitor nisl in est sagittis, luctus semper tortor vehicula. Quisque quis lorem lorem. Fusce mattis luctus aliquet. Vestibulum dictum nibh at nibh sodales, at varius dolor fringilla. Morbi accumsan tellus mi, eu vestibulum orci pretium eu. Nam ante mauris, euismod ut laoreet at, dignissim nec tortor. Vivamus eu ex sodales, interdum nibh sit amet, tempus massa. Nullam lobortis a libero congue rutrum. Maecenas nisl ipsum, rhoncus et aliquet et, aliquet quis quam. Etiam aliquam vehicula tempus. Curabitur nec lacinia libero, ut malesuada nunc.</p>
-						<p> Vestibulum pharetra vulputate diam et maximus. Suspendisse consequat nibh vel interdum varius. Fusce non libero tincidunt, interdum turpis lobortis, vulputate orci. Suspendisse vitae dui augue. Integer efficitur tincidunt urna varius cursus. Aliquam vitae dui arcu. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Quisque tincidunt feugiat tristique. Nam interdum, lacus sit amet elementum sagittis, arcu ex tempor turpis, a mollis urna elit sit amet tortor. Quisque interdum eu justo non feugiat. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque finibus mi eu interdum gravida.</p>
-						<p>Nam ante leo, scelerisque ut dapibus in, imperdiet eget velit. Donec vitae metus id urna sodales condimentum non vitae turpis. Phasellus ut feugiat elit. Nunc sodales commodo consequat. Mauris felis tellus, tempor aliquet finibus sit amet, ullamcorper sit amet ipsum. Curabitur maximus libero non purus varius commodo. Curabitur pellentesque ac ex eget dignissim. Integer at semper enim. </p>
+						<ul id="collision_sequence"></ul>
+					</div>
+					<div class="toolbar">
+						<button id="toolbar_prev" class="leftmost">
+							<span>&uarr;</span>
+						</button>
+						<button id="toolbar_next" class="rightmost">
+							<span>&darr;</span>
+						</button>
 					</div>
 				</div>
 			</div>
 			<div>
-				<p>(Event properties here.)</p>
+				<div style="display:flex;flex-direction:row;gap:16px;margin-bottom:16px;">
+					<div class="properties_heading">
+						<h3 style="display:flex;flex-direction:row;gap:16px;align-items:baseline;">
+							<span id="breadcrumb"><a>Westminster Quarters</a> &rarr; <a>Quarter Hours</a> &rarr;</span>
+							<input type="text" id="properties_title" value="Quarter-Hour"/>
+							<span id="properties_type">[event]</span>
+						</h3>
+					</div>
+					<label class="switch">
+						<input type="checkbox" id="properties_enable">
+						<span class="slider"></span>
+					</label>
+				</div>
+				<div id="properties">
+					
+				</div>
 			</div>
 		</main>
 		<footer>
