@@ -254,7 +254,10 @@
 			</div>
 			<div v-if="page==0" style="display:flex;flex-direction:column;align-items:center;margin-bottom:16px;gap:16px;">
 				<p>Lorem ipsum dolor sit amet.</p>
-				<button @click="page++;" style="">Next</button>
+				<div style="display:flex;flex-direction:row;justify-content:space-between;gap:12px;width:100%;">
+					<button @click="importDefault(); page++;" style="flex:1;">Use Default</button>
+					<button @click="page++;" style="flex:1;">Start from Scratch</button>
+				</div>
 			</div>
 			<div v-else-if="page==1">
 				<div style="display:flex;flex-direction:row;gap:16px;margin-bottom:24px;">
@@ -338,14 +341,11 @@
 <script type="module">
   import { createApp, ref } from 'https://unpkg.com/vue@3.5.13/dist/vue.esm-browser.js'
 
-  createApp({
+  const app = createApp({
     data() {
       return {
         page: 0,
-        conf: {
-          this: 'is',
-          my: 'obj'
-        }
+        conf: {}
       };
     },
     setup() {
@@ -360,6 +360,21 @@
       }
     },
     methods: {
+      importDefault() {
+        let xhr = new XMLHttpRequest();
+        //let url = 'default.json';
+        let url = 'https://raw.githubusercontent.com/petermarkley/clockworth-conf/refs/heads/master/default.json';
+        xhr.open('GET', url, true);
+        xhr.responseType = 'json';
+        xhr.onload = () => {
+          if (xhr.status === 200) {
+            this.conf = xhr.response;
+          } else {
+            console.log("HTTP response "+xhr.status);
+          }
+        };
+        xhr.send();
+      },
       copyJsonOutput() {
         let element = document.getElementById("json-output");
         element.select();
@@ -377,7 +392,8 @@
         document.body.removeChild(anchor);
       }
     }
-  }).mount('#app')
+  });
+  window.vm = app.mount('#app');
 </script>
 	</body>
 </html>
