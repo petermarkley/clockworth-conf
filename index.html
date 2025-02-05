@@ -227,7 +227,7 @@
 				-ms-transform: translateX(26px);
 				transform: translateX(26px);
 			}
-			.json-output {
+			#json-output {
 				color: inherit;
 				font-weight: bold;
 				width: 100%;
@@ -325,9 +325,9 @@
 				<div style="display:flex;flex-direction:row;justify-content:flex-start;">
 					<button class="secondary" @click="page--;">&larr; Back</button>
 				</div>
-				<textarea class="json-output" readonly>Lorem ipsum dolor sit amet.</textarea>
+				<textarea id="json-output" readonly>{{ jsonOutput }}</textarea>
 				<div style="display:flex;flex-direction:row;justify-content:space-between;gap:12px;">
-					<button style="flex:1;">Copy</button>
+					<button style="flex:1;" @click="copyJsonOutput();">Copy</button>
 					<button style="flex:1;">Download</button>
 				</div>
 			</div>
@@ -342,7 +342,10 @@
     data() {
       return {
         page: 0,
-        thisIsMyCustomVariable: 'hellow whorld'
+        conf: {
+          this: 'is',
+          my: 'obj'
+        }
       };
     },
     setup() {
@@ -350,6 +353,18 @@
       return {
         message
       };
+    },
+    computed: {
+      jsonOutput() {
+        return JSON.stringify(this.conf);
+      }
+    },
+    methods: {
+      copyJsonOutput() {
+        let element = document.getElementById("json-output");
+        element.select();
+        document.execCommand('copy');
+      }
     }
   }).mount('#app')
 </script>
