@@ -328,7 +328,7 @@
 				<textarea id="json-output" readonly>{{ jsonOutput }}</textarea>
 				<div style="display:flex;flex-direction:row;justify-content:space-between;gap:12px;">
 					<button style="flex:1;" @click="copyJsonOutput();">Copy</button>
-					<button style="flex:1;">Download</button>
+					<button style="flex:1;" @click="downloadJsonOutput();">Download</button>
 				</div>
 			</div>
 		</main>
@@ -364,6 +364,17 @@
         let element = document.getElementById("json-output");
         element.select();
         document.execCommand('copy');
+      },
+      downloadJsonOutput() {
+        let output = document.getElementById("json-output");
+        let anchor = document.createElement('a');
+        anchor.setAttribute('href', 'data:application/json,' + output.value);
+        console.log(output.value);
+        anchor.setAttribute('download', "clockworth.json");
+        anchor.style.display = 'none';
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
       }
     }
   }).mount('#app')
