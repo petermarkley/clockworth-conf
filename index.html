@@ -77,9 +77,9 @@
 				overflow: visible;
 			}
 			#chime_events ul {
-				padding: 0 0 0 20px;
-				margin: 0 0 0 6px;
-				border-left: 2px solid #4d4d4c;
+				padding: 0 0 0 26px;
+				margin: 0;
+				/*border-left: 2px solid #4d4d4c;*/
 			}
 			#chime_events li {
 				margin: 0;
@@ -117,6 +117,26 @@
 			}
 			.event-bar:hover {
 				background-color: #4d4d4c;
+			}
+			.hierarchy-parent {
+				position: absolute;
+				pointer-events: none;
+				top: -2em;
+				height: 3em;
+				box-sizing: border-box;
+				border-left: 2px solid #4d4d4c;
+			}
+			.hierarchy-item {
+				position: absolute;
+				pointer-events: none;
+				left: -22px;
+				top: -2em;
+				width: 12px;
+				height: 3em;
+				box-sizing: border-box;
+				border-bottom: 2px solid #4d4d4c;
+				border-left: 2px solid #4d4d4c;
+				border-bottom-left-radius: 8px;
 			}
 			button {
 				appearance: none;
@@ -318,7 +338,7 @@
 						<h2>Chime Events</h2>
 						<div class="inset" style="height:300px;">
 							<ul id="chime_events">
-								<chime-event v-for="event in conf.events" :event="event"></chime-event>
+								<chime-event v-for="(event, index) in conf.events" :event="event" :index="index" :depth="0" :has-next-sibling="[]"></chime-event>
 							</ul>
 						</div>
 						<div class="toolbar">
@@ -473,13 +493,18 @@
   
   app.component('chime-event', {
     name: 'ChimeEvent',
-    props: ['event'],
+    props: [
+      'event',
+      'index',
+      'depth',
+      'has-next-sibling'
+    ],
     data() {
       return {
         open: true
       };
     },
-    template: '<li v-if="event.type == \'group\'"> \
+    template: '<li v-if="event.type == \'group\'" style="position:relative" :data-index="index" :data-depth="depth" :data-x="hasNextSibling"> \
         <div class="event-heading"> \
           <span :class="\'drawer-button \' + (open ? \'open\' : \'\')" @click="open = !open">&#x25B8;</span> \
           <div class="event-bar"> \
@@ -492,10 +517,11 @@
           </div> \
         </div> \
         <ul v-if="event.members.length > 0" :class="open ? \'open\':\'\'"> \
-          <chime-event v-for="member in event.members" :event="member"></chime-event> \
+          <chime-event v-for="(member, subindex) in event.members" :event="member" :index="subindex" :depth="depth+1" :has-next-sibling="hasNextSibling.concat([subindex < event.members.length-1])"></chime-event> \
         </ul> \
+        <hierarchy-lines v-if="depth>0" :index="index" :depth="depth" :has-next-sibling="hasNextSibling"></hierarchy-lines> \
       </li> \
-      <li v-else-if="event.type == \'event\'"> \
+      <li v-else-if="event.type == \'event\'" style="position:relative" :data-index="index" :data-depth="depth" :data-x="hasNextSibling"> \
         <div class="event-heading"> \
           <div class="event-bar"> \
             <span> \
@@ -506,7 +532,22 @@
             <span>{{ event.label }}</span> \
           </div> \
         </div> \
-      </li>',
+        <hierarchy-lines v-if="depth>0" :index="index" :depth="depth" :has-next-sibling="hasNextSibling"></hierarchy-lines> \
+      </li>'
+  });
+  
+  app.component('hierarchy-lines', {
+    name: 'HierarchyLines',
+    props: [
+      'depth',
+      'index',
+      'has-next-sibling'
+    ],
+    template: '<template v-for="(parent, i) in hasNextSibling"> \
+        <div v-if="parent && (i < hasNextSibling.length-1)" class="hierarchy-parent" :style="\'left:\'+((depth-i)*-24)+\'px;\'"></div> \
+      </template>\
+      <div class="hierarchy-item" v-if="index==0" style="height:1em;top:0;"></div> \
+      <div class="hierarchy-item" v-else style="height:3em;top:-2em;"></div>'
   });
   
   window.vm = app.mount('#app');
