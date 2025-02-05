@@ -67,6 +67,24 @@
 				overflow-y: scroll;
 				margin: 0 0 8px 0;
 			}
+			#chime_events, #chime_events ul {
+				list-style-type: none;
+				padding: 0;
+				margin: 0;
+				display: flex;
+				flex-direction: column;
+				gap: 4px;
+				overflow: visible;
+			}
+			#chime_events ul {
+				padding: 0 0 0 16px;
+				margin: 0 0 0 10px;
+				border-left: 2px solid #4d4d4c;
+			}
+			#chime_events li {
+				margin: 0;
+				padding: 0;
+			}
 			button {
 				appearance: none;
 				border: none;
@@ -227,7 +245,7 @@
 				-ms-transform: translateX(26px);
 				transform: translateX(26px);
 			}
-			#json-output {
+			#json_output {
 				color: inherit;
 				font-weight: bold;
 				width: 100%;
@@ -264,7 +282,9 @@
 					<div style="width:100%;">
 						<h2>Chime Events</h2>
 						<div class="inset" style="height:300px;">
-							<ul id="chime_events"></ul>
+							<ul id="chime_events">
+								<chime-event v-for="event in conf.events" :event="event"></chime-event>
+							</ul>
 						</div>
 						<div class="toolbar">
 							<button id="toolbar_add" class="leftmost">
@@ -328,7 +348,7 @@
 				<div style="display:flex;flex-direction:row;justify-content:flex-start;">
 					<button class="secondary" @click="page--;">&larr; Back</button>
 				</div>
-				<textarea id="json-output" readonly>{{ jsonOutput }}</textarea>
+				<textarea id="json_output" readonly>{{ jsonOutput }}</textarea>
 				<div style="display:flex;flex-direction:row;justify-content:space-between;gap:12px;">
 					<button style="flex:1;" @click="copyJsonOutput();">Copy</button>
 					<button style="flex:1;" @click="downloadJsonOutput();">Download</button>
@@ -345,13 +365,12 @@
     data() {
       return {
         page: 0,
-        conf: {}
-      };
-    },
-    setup() {
-      const message = ref('Hello Vue!');
-      return {
-        message
+        conf: {
+          location: "",
+          tick: true,
+          chime: true,
+          events: []
+        }
       };
     },
     computed: {
@@ -376,12 +395,12 @@
         xhr.send();
       },
       copyJsonOutput() {
-        let element = document.getElementById("json-output");
+        let element = document.getElementById("json_output");
         element.select();
         document.execCommand('copy');
       },
       downloadJsonOutput() {
-        let output = document.getElementById("json-output");
+        let output = document.getElementById("json_output");
         let anchor = document.createElement('a');
         anchor.setAttribute('href', 'data:application/json,' + output.value);
         console.log(output.value);
@@ -393,6 +412,27 @@
       }
     }
   });
+  
+  app.component('chime-event', {
+    name: 'ChimeEvent',
+    props: ['event'],
+    template: '<li v-if="event.type == \'group\'"> \
+        <div> \
+          <span>(G)</span> \
+          <span>{{ event.label }}</span> \
+        </div> \
+        <ul v-if="event.members.length > 0"> \
+          <chime-event v-for="member in event.members" :event="member"></chime-event> \
+        </ul> \
+      </li> \
+      <li v-else-if="event.type == \'event\'"> \
+        <div> \
+          <span>(E)</span> \
+          <span>{{ event.label }}</span> \
+        </div> \
+      </li>',
+  });
+  
   window.vm = app.mount('#app');
 </script>
 	</body>
