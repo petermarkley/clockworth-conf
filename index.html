@@ -77,8 +77,8 @@
 				overflow: visible;
 			}
 			#chime_events ul {
-				padding: 0 0 0 16px;
-				margin: 0 0 0 10px;
+				padding: 0 0 0 20px;
+				margin: 0 0 0 6px;
 				border-left: 2px solid #4d4d4c;
 			}
 			#chime_events li {
@@ -88,6 +88,25 @@
 				flex-direction: column;
 				gap: 4px;
 				align-items: flex-start;
+			}
+			.event-heading {
+				display: flex;
+				flex-direction: row;
+				gap: 8px;
+			}
+			.drawer-button {
+				cursor: pointer;
+			}
+			.drawer-button.open {
+				transform: rotate(90deg);
+			}
+			#chime_events ul {
+				display: none;
+				transform: scaleY(0);
+			}
+			#chime_events ul.open {
+				display: flex;
+				transform: scaleY(1.0);
 			}
 			.event-bar {
 				margin: 0;
@@ -455,8 +474,14 @@
   app.component('chime-event', {
     name: 'ChimeEvent',
     props: ['event'],
+    data() {
+      return {
+        open: true
+      };
+    },
     template: '<li v-if="event.type == \'group\'"> \
         <div class="event-heading"> \
+          <span :class="\'drawer-button \' + (open ? \'open\' : \'\')" @click="open = !open">&#x25B8;</span> \
           <div class="event-bar"> \
             <span> \
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width:1em;height:1em;"> \
@@ -466,7 +491,7 @@
             <span>{{ event.label }}</span> \
           </div> \
         </div> \
-        <ul v-if="event.members.length > 0"> \
+        <ul v-if="event.members.length > 0" :class="open ? \'open\':\'\'"> \
           <chime-event v-for="member in event.members" :event="member"></chime-event> \
         </ul> \
       </li> \
