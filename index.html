@@ -489,7 +489,7 @@
 								<span id="breadcrumb">
 									<template v-for="(item, i) in store.selection.path">
 										<span v-if="i<(store.selection.path.length-1)">
-											<a>
+											<a @click="store.select" class="selectable" :data-path="JSON.stringify(store.selection.path.slice(0,i+1))">
 												<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
 													<use href="img/icons.svg#folder"/>
 												</svg>
