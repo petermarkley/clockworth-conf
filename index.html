@@ -440,11 +440,11 @@
 								<li v-for="(n, i) in 10">
 									<span>Slot {{ n }}:</span>
 									<ul class="collision-list">
-										<li v-for="event in getCollisionList(n,store.conf.events)" class="collision-item">
+										<li v-for="item in getCollisionList(n,store.conf.events,true)" :class="'collision-item'+(store.selection.event===item.event?' selected':'')+(item.enable?'':' disable')">
 											<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
 												<use href="img/icons.svg#music"/>
 											</svg>
-											<span>{{ event.label }}</span>
+											<span>{{ item.event.label }}</span>
 										</li>
 									</ul>
 								</li>
@@ -590,16 +590,25 @@
         xhr.send();
       },
       // Return list of all chime events matching the given sequence slot, recursively searching groups
-      getCollisionList(n,events) {
+      getCollisionList(n,events,enable) {
         let list = [];
         for (let i=0; i < events.length; i++) {
           if (events[i].type == 'group') {
             // for groups, descend and gather and matches within
-            list.push(...this.getCollisionList(n,events[i].members));
+            list.push(
+              ...this.getCollisionList(
+                n,
+                events[i].members,
+                (enable && events[i].enable)
+              )
+            );
           } else if (events[i].type == 'event') {
             // if this is a match, add it
             if (events[i].sequence == n) {
-              list.push(events[i]);
+              list.push({
+                enable: (enable && events[i].enable),
+                event: events[i]
+              });
             }
           }
         }
