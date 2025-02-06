@@ -116,14 +116,14 @@
 				border-radius: 8px;
 				cursor: pointer;
 			}
-			.event-bar:hover {
+			.event-bar:hover, .event-bar:focus {
 				background-color: #4d4d4c;
 			}
 			.event-bar.selected {
 				background-color: #b6b6b6;
 				color: #393836;
 			}
-			.event-bar.selected:hover {
+			.event-bar.selected:hover, .event-bar.selected:focus {
 				background-color: #fff;
 			}
 			.disable .event-bar {
@@ -148,6 +148,41 @@
 				border-bottom: 2px solid #4d4d4c;
 				border-left: 2px solid #4d4d4c;
 				border-bottom-left-radius: 8px;
+			}
+			#collision_sequence {
+				list-style-type: none;
+				margin: 0;
+				padding: 0;
+			}
+			.collision-list {
+				list-style-type: none;
+				margin: 0 0 0 26px;
+				padding: 0;
+				display: flex;
+				flex-direction: row;
+				flex-wrap: wrap;
+				justify-content: flex-start;
+				gap: 8px;
+			}
+			.collision-item {
+				margin: 0;
+				padding: 4px 8px;
+				background-color: #393836;
+				border-radius: 4px;
+				cursor: pointer;
+			}
+			.collision-item:hover, .collision-item:focus {
+				background-color: #4d4d4c;
+			}
+			.collision-item.selected {
+				background-color: #b6b6b6;
+				color: #393836;
+			}
+			.collision-item.selected:hover, .collision-item.selected:focus {
+				background-color: #fff;
+			}
+			.collision-item.disable {
+				opacity: 0.3;
 			}
 			button {
 				appearance: none;
@@ -380,7 +415,14 @@
 					<div style="width:100%;">
 						<h2>Collision Sequence</h2>
 						<div class="inset" style="height:300px;">
-							<ul id="collision_sequence"></ul>
+							<ol id="collision_sequence">
+								<li v-for="(n, i) in 10">
+									<span>Slot {{ n }}:</span>
+									<ul class="collision-list">
+										<li v-for="event in getCollisionList(n,store.conf.events)" class="collision-item">{{ event.label }}</li>
+									</ul>
+								</li>
+							</ol>
 						</div>
 						<div class="toolbar">
 							<button id="toolbar_prev" class="leftmost">
@@ -506,6 +548,22 @@
           }
         };
         xhr.send();
+      },
+      // Return list of all chime events matching the given sequence slot, recursively searching groups
+      getCollisionList(n,events) {
+        let list = [];
+        for (let i=0; i < events.length; i++) {
+          if (events[i].type == 'group') {
+            // for groups, descend and gather and matches within
+            list.push(...this.getCollisionList(n,events[i].members));
+          } else if (events[i].type == 'event') {
+            // if this is a match, add it
+            if (events[i].sequence == n) {
+              list.push(events[i]);
+            }
+          }
+        }
+        return list;
       },
       // On page 2, if the user opts to copy payload to clipboard ...
       copyJsonOutput() {
