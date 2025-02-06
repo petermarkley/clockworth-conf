@@ -93,6 +93,7 @@
 				display: flex;
 				flex-direction: row;
 				gap: 8px;
+				align-items: baseline;
 			}
 			.drawer-button {
 				cursor: pointer;
@@ -124,6 +125,9 @@
 			}
 			.event-bar.selected:hover {
 				background-color: #fff;
+			}
+			.disable .event-bar {
+				opacity: 0.3;
 			}
 			.hierarchy-parent {
 				position: absolute;
@@ -234,9 +238,13 @@
 				padding-bottom: 16px;
 				flex-grow: 1;
 			}
-			#breadcrumb {
+			#breadcrumb, #breadcrumb>span {
 				font-size: 12px;
 				font-weight: normal;
+				display: inline-flex;
+				flex-direction: row;
+				justify-content: flex-start;
+				gap: 8px;
 			}
 			#properties_title {
 				appearance: none;
@@ -385,16 +393,20 @@
 					</div>
 				</div>
 				<div>
-					<div style="display:flex;flex-direction:row;gap:16px;margin-bottom:16px;">
+					<div v-if="store.selection.event" style="display:flex;flex-direction:row;gap:16px;margin-bottom:16px;">
 						<div class="properties_heading">
 							<h3 style="display:flex;flex-direction:row;gap:16px;align-items:baseline;">
-								<span id="breadcrumb"><a>Westminster Quarters</a> &rarr; <a>Quarter Hours</a> &rarr;</span>
-								<input type="text" id="properties_title" value="Quarter-Hour"/>
-								<span id="properties_type">[event]</span>
+								<span id="breadcrumb">
+									<template v-for="(item, i) in store.selection.path">
+										<span v-if="i<(store.selection.path.length-1)"><a>{{ item.event.label }}</a> &rarr;</span>
+									</template>
+								</span>
+								<input type="text" id="properties_title" v-model="store.selection.event.label"/>
+								<span id="properties_type">[{{ store.selection.event.type }}]</span>
 							</h3>
 						</div>
 						<label class="switch">
-							<input type="checkbox" id="properties_enable">
+							<input type="checkbox" id="properties_enable" v-model="store.selection.event.enable">
 							<span class="slider"></span>
 						</label>
 					</div>
@@ -565,6 +577,7 @@
           for (let j=0; j < list.length; j++) {
             if (j==path[i].index) {
               event = list[j];
+              store.selection.path[i].event = event;
               list = event.members;
               break;
             }
@@ -573,7 +586,7 @@
         store.selection.event = event;
       }
     },
-    template: '<li v-if="event.type == \'group\'" style="position:relative"> \
+    template: '<li v-if="event.type == \'group\'" style="position:relative" :class="event.enable?\'\':\'disable\'"> \
         <div class="event-heading"> \
           <span :class="\'drawer-button \' + (open ? \'open\' : \'\')" @click="open = !open">&#x25B8;</span> \
           <div :class="\'event-bar\'+(store.selection.event===event?\' selected\':\'\')" @click="select" :data-path="JSON.stringify(nextPath)"> \
@@ -584,13 +597,16 @@
             </span> \
             <span>{{ event.label }}</span> \
           </div> \
+          <svg v-if="!event.enable" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1em;height:1em;"> \
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" /> \
+          </svg> \
         </div> \
         <ul v-if="event.members.length > 0" :class="open ? \'open\':\'\'"> \
           <chime-event v-for="(member, subindex) in event.members" :event="member" :index="subindex" :depth="depth+1" :has-next-sibling="subindex < event.members.length-1" :path="nextPath"></chime-event> \
         </ul> \
         <hierarchy-lines v-if="depth>0" :index="index" :depth="depth" :path="path"></hierarchy-lines> \
       </li> \
-      <li v-else-if="event.type == \'event\'" style="position:relative"> \
+      <li v-else-if="event.type == \'event\'" style="position:relative" :class="event.enable?\'\':\'disable\'"> \
         <div class="event-heading"> \
           <div :class="\'event-bar\'+(store.selection.event===event?\' selected\':\'\')" @click="select" :data-path="JSON.stringify(nextPath)"> \
             <span> \
@@ -600,6 +616,9 @@
             </span> \
             <span>{{ event.label }}</span> \
           </div> \
+          <svg v-if="!event.enable" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1em;height:1em;"> \
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" /> \
+          </svg> \
         </div> \
         <hierarchy-lines v-if="depth>0" :index="index" :depth="depth" :path="path"></hierarchy-lines> \
       </li>'
