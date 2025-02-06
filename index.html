@@ -409,7 +409,14 @@
 						<h2>Chime Events</h2>
 						<div class="inset" style="height:300px;">
 							<ul id="chime_events">
-								<chime-event v-for="(event, index) in store.conf.events" :event="event" :index="index" :depth="0" :has-next-sibling="false" :path="[]"></chime-event>
+								<chime-event
+									v-for="(event, index) in store.conf.events"
+									:event="event"
+									:index="index"
+									:depth="0"
+									:has-next-sibling="false"
+									:path="[]"
+								></chime-event>
 							</ul>
 						</div>
 						<div class="toolbar">
@@ -440,7 +447,12 @@
 								<li v-for="(n, i) in 10">
 									<span>Slot {{ n }}:</span>
 									<ul class="collision-list">
-										<li v-for="item in getCollisionList(n,store.conf.events,true)" :class="'collision-item'+(store.selection.event===item.event?' selected':'')+(item.enable?'':' disable')">
+										<li
+											v-for="item in getCollisionList(n,store.conf.events,true,[])"
+											@click="store.select"
+											:data-path="JSON.stringify(item.path)"
+											:class="'collision-item selectable'+(store.selection.event===item.event?' selected':'')+(item.enable?'':' disable')"
+										>
 											<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
 												<use href="img/icons.svg#music"/>
 											</svg>
@@ -451,10 +463,20 @@
 							</ol>
 						</div>
 						<div class="toolbar">
-							<button id="toolbar_prev" class="leftmost" :disabled="!store.selection.event || store.selection.event.sequence < 2" @click="store.selection.event.sequence--;">
+							<button
+								id="toolbar_prev"
+								class="leftmost"
+								:disabled="!store.selection.event || store.selection.event.sequence < 2"
+								@click="store.selection.event.sequence--;"
+							>
 								<span>&uarr;</span>
 							</button>
-							<button id="toolbar_next" class="rightmost" :disabled="!store.selection.event || store.selection.event.sequence > 9" @click="store.selection.event.sequence++;">
+							<button
+								id="toolbar_next"
+								class="rightmost"
+								:disabled="!store.selection.event || store.selection.event.sequence > 9"
+								@click="store.selection.event.sequence++;"
+							>
 								<span>&darr;</span>
 							</button>
 						</div>
@@ -550,6 +572,32 @@
     selection: {
       path: [],
       event: null
+    },
+    // Update GUI selection
+    select(e) {
+      // get context from clicked DOM element
+      let bar = null;
+      if (e.target.classList.contains('selectable')) {
+        bar = e.target;
+      } else {
+        bar = e.target.closest('.selectable');
+      }
+      let path = JSON.parse(bar.dataset.path);
+      store.selection.path = path;
+      // follow path to specific selected item
+      let event = null;
+      let list = store.conf.events;
+      for (let i=0; i < path.length; i++) {
+        for (let j=0; j < list.length; j++) {
+          if (j==path[i].index) {
+            event = list[j];
+            store.selection.path[i].event = event;
+            list = event.members;
+            break;
+          }
+        }
+      }
+      store.selection.event = event;
     }
   });
 
@@ -590,16 +638,21 @@
         xhr.send();
       },
       // Return list of all chime events matching the given sequence slot, recursively searching groups
-      getCollisionList(n,events,enable) {
+      getCollisionList(n,events,enable,path) {
         let list = [];
         for (let i=0; i < events.length; i++) {
+          let newPath = path.concat({
+            index: i,
+            label: events[i].label
+          });
           if (events[i].type == 'group') {
             // for groups, descend and gather and matches within
             list.push(
               ...this.getCollisionList(
                 n,
                 events[i].members,
-                (enable && events[i].enable)
+                (enable && events[i].enable),
+                newPath
               )
             );
           } else if (events[i].type == 'event') {
@@ -607,6 +660,7 @@
             if (events[i].sequence == n) {
               list.push({
                 enable: (enable && events[i].enable),
+                path: newPath,
                 event: events[i]
               });
             }
@@ -665,38 +719,10 @@
         });
       }
     },
-    methods: {
-      // Update GUI selection
-      select(e) {
-        // get context from clicked DOM element
-        let bar = null;
-        if (e.target.classList.contains('event-bar')) {
-          bar = e.target;
-        } else {
-          bar = e.target.closest('.event-bar');
-        }
-        let path = JSON.parse(bar.dataset.path);
-        store.selection.path = path;
-        // follow path to specific selected item
-        let event = null;
-        let list = store.conf.events;
-        for (let i=0; i < path.length; i++) {
-          for (let j=0; j < list.length; j++) {
-            if (j==path[i].index) {
-              event = list[j];
-              store.selection.path[i].event = event;
-              list = event.members;
-              break;
-            }
-          }
-        }
-        store.selection.event = event;
-      }
-    },
     template: '<li v-if="event.type == \'group\'" style="position:relative" :class="event.enable?\'\':\'disable\'"> \
         <div class="event-heading"> \
           <span :class="\'drawer-button \' + (open ? \'open\' : \'\')" @click="open = !open">&#x25B8;</span> \
-          <div :class="\'event-bar\'+(store.selection.event===event?\' selected\':\'\')" @click="select" :data-path="JSON.stringify(nextPath)"> \
+          <div :class="\'event-bar selectable\'+(store.selection.event===event?\' selected\':\'\')" @click="store.select" :data-path="JSON.stringify(nextPath)"> \
             <span> \
               <svg viewBox="0 0 24 24" style="width:1em;height:1em;"> \
                 <use href="img/icons.svg#folder"/> \
@@ -715,7 +741,7 @@
       </li> \
       <li v-else-if="event.type == \'event\'" style="position:relative" :class="event.enable?\'\':\'disable\'"> \
         <div class="event-heading"> \
-          <div :class="\'event-bar\'+(store.selection.event===event?\' selected\':\'\')" @click="select" :data-path="JSON.stringify(nextPath)"> \
+          <div :class="\'event-bar selectable\'+(store.selection.event===event?\' selected\':\'\')" @click="store.select" :data-path="JSON.stringify(nextPath)"> \
             <span> \
               <svg viewBox="0 0 24 24" style="width:1em;height:1em;"> \
                 <use href="img/icons.svg#music"/> \
