@@ -451,10 +451,10 @@
 							</ol>
 						</div>
 						<div class="toolbar">
-							<button id="toolbar_prev" class="leftmost">
+							<button id="toolbar_prev" class="leftmost" :disabled="!store.selection.event || store.selection.event.sequence < 2" @click="store.selection.event.sequence--;">
 								<span>&uarr;</span>
 							</button>
-							<button id="toolbar_next" class="rightmost">
+							<button id="toolbar_next" class="rightmost" :disabled="!store.selection.event || store.selection.event.sequence > 9" @click="store.selection.event.sequence++;">
 								<span>&darr;</span>
 							</button>
 						</div>
