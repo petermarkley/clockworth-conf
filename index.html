@@ -156,20 +156,24 @@
 			}
 			.collision-list {
 				list-style-type: none;
-				margin: 0 0 0 26px;
+				margin: 0 0 0 16px;
 				padding: 0;
 				display: flex;
 				flex-direction: row;
 				flex-wrap: wrap;
 				justify-content: flex-start;
-				gap: 8px;
+				gap: 4px;
 			}
 			.collision-item {
 				margin: 0;
 				padding: 4px 8px;
 				background-color: #393836;
-				border-radius: 4px;
+				border-radius: 8px;
 				cursor: pointer;
+				display: flex;
+				flex-direction: row;
+				gap: 4px;
+				align-items: baseline;
 			}
 			.collision-item:hover, .collision-item:focus {
 				background-color: #4d4d4c;
@@ -273,13 +277,14 @@
 				padding-bottom: 16px;
 				flex-grow: 1;
 			}
-			#breadcrumb, #breadcrumb>span {
+			#breadcrumb, #breadcrumb span, #breadcrumb a {
 				font-size: 12px;
 				font-weight: normal;
 				display: inline-flex;
 				flex-direction: row;
 				justify-content: flex-start;
 				gap: 8px;
+				align-items: baseline;
 			}
 			#properties_title {
 				appearance: none;
@@ -419,7 +424,12 @@
 								<li v-for="(n, i) in 10">
 									<span>Slot {{ n }}:</span>
 									<ul class="collision-list">
-										<li v-for="event in getCollisionList(n,store.conf.events)" class="collision-item">{{ event.label }}</li>
+										<li v-for="event in getCollisionList(n,store.conf.events)" class="collision-item">
+											<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
+												<use href="img/icons.svg#music"/>
+											</svg>
+											<span>{{ event.label }}</span>
+										</li>
 									</ul>
 								</li>
 							</ol>
@@ -440,11 +450,26 @@
 							<h3 style="display:flex;flex-direction:row;gap:16px;align-items:baseline;">
 								<span id="breadcrumb">
 									<template v-for="(item, i) in store.selection.path">
-										<span v-if="i<(store.selection.path.length-1)"><a>{{ item.event.label }}</a> &rarr;</span>
+										<span v-if="i<(store.selection.path.length-1)">
+											<a>
+												<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
+													<use href="img/icons.svg#folder"/>
+												</svg>
+												<span>{{ item.event.label }}</span>
+											</a>
+											<span>&rarr;</span>
+										</span>
 									</template>
 								</span>
-								<input type="text" id="properties_title" v-model="store.selection.event.label"/>
-								<span id="properties_type">[{{ store.selection.event.type }}]</span>
+								<span style="display:inline-flex;flex-direction:row;gap:8px;align-items:baseline;">
+									<svg v-if="store.selection.event.type=='group'" viewBox="0 0 24 24" style="width:1em;height:1em;">
+										<use href="img/icons.svg#folder"/>
+									</svg>
+									<svg v-else-if="store.selection.event.type=='event'" viewBox="0 0 24 24" style="width:1em;height:1em;">
+										<use href="img/icons.svg#music"/>
+									</svg>
+									<input type="text" id="properties_title" v-model="store.selection.event.label"/>
+								</span>
 							</h3>
 						</div>
 						<label class="switch">
