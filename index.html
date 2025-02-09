@@ -420,22 +420,49 @@
 							</ul>
 						</div>
 						<div class="toolbar">
-							<button id="toolbar_add" class="leftmost">
+							<button
+								id="toolbar_add"
+								class="leftmost"
+								@click="store.newEvent"
+							>
 								<span>+</span>
 							</button>
-							<button id="toolbar_remove">
+							<button
+								id="toolbar_remove"
+								:disabled="!store.selection.event"
+								@click="store.deleteEvent"
+							>
 								<span>-</span>
 							</button>
-							<button id="toolbar_unindent">
+							<button
+								id="toolbar_unindent"
+								:disabled="!store.selection.event || store.selection.path.length == 0"
+								@click="store.decreaseIndent"
+							>
 								<span>&larr;</span>
 							</button>
-							<button id="toolbar_indent">
+							<button
+								id="toolbar_indent"
+								:disabled="!store.selection.event"
+								@click="store.increaseIndent"
+							>
 								<span>&rarr;</span>
 							</button>
-							<button id="toolbar_up">
+							<button
+								id="toolbar_up"
+								:disabled="!store.selection.event || store.selection.path[store.selection.path.length-1].index == 0"
+								@click="store.moveUpward"
+							>
 								<span>&uarr;</span>
 							</button>
-							<button id="toolbar_down" class="rightmost">
+							<button
+								id="toolbar_down"
+								class="rightmost"
+								:disabled="!store.selection.event ||
+									store.selection.path.length < 2 && (store.selection.path[store.selection.path.length-1].index == store.conf.events.length-1) ||
+									store.selection.path.length > 1 && (store.selection.path[store.selection.path.length-1].index == store.selection.path[store.selection.path.length-2].event.members.length-1)"
+								@click="store.moveDownward"
+							>
 								<span>&darr;</span>
 							</button>
 						</div>
@@ -466,7 +493,7 @@
 							<button
 								id="toolbar_prev"
 								class="leftmost"
-								:disabled="!store.selection.event || store.selection.event.sequence < 2"
+								:disabled="!store.selection.event || store.selection.event.type != 'event' || store.selection.event.sequence < 2"
 								@click="store.selection.event.sequence--;"
 							>
 								<span>&uarr;</span>
@@ -474,7 +501,7 @@
 							<button
 								id="toolbar_next"
 								class="rightmost"
-								:disabled="!store.selection.event || store.selection.event.sequence > 9"
+								:disabled="!store.selection.event || store.selection.event.type != 'event' || store.selection.event.sequence > 9"
 								@click="store.selection.event.sequence++;"
 							>
 								<span>&darr;</span>
@@ -598,7 +625,31 @@
         }
       }
       store.selection.event = event;
-    }
+    },
+    // Add new chime event
+    newEvent() {
+      alert("add event");
+    },
+    // Delete selected chime event
+    deleteEvent() {
+      alert("delete event");
+    },
+    // Move chime event upward in hierarchy
+    decreaseIndent() {
+      alert("decrease indent");
+    },
+    // Move chime event downward in hierarchy
+    increaseIndent() {
+      alert("increase indent");
+    },
+    // Move selected chime event upward in list
+    moveUpward() {
+      alert("move upward");
+    },
+    // Move selected chime event downward in list
+    moveDownward() {
+      alert("move downward");
+    },
   });
 
   // Root component
