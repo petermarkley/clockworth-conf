@@ -424,6 +424,7 @@
 								id="toolbar_add"
 								class="leftmost"
 								@click="store.newEvent"
+								title="Add new chime object"
 							>
 								<span>+</span>
 							</button>
@@ -431,6 +432,7 @@
 								id="toolbar_remove"
 								:disabled="!store.selection.event"
 								@click="store.deleteEvent"
+								title="Delete this chime object"
 							>
 								<span>-</span>
 							</button>
@@ -438,6 +440,7 @@
 								id="toolbar_unindent"
 								:disabled="!store.selection.event || store.selection.path.length == 0"
 								@click="store.decreaseIndent"
+								title="Decrease indent"
 							>
 								<span>&larr;</span>
 							</button>
@@ -445,6 +448,7 @@
 								id="toolbar_indent"
 								:disabled="!store.selection.event"
 								@click="store.increaseIndent"
+								title="Increase indent"
 							>
 								<span>&rarr;</span>
 							</button>
@@ -452,6 +456,7 @@
 								id="toolbar_up"
 								:disabled="!store.selection.event || store.selection.path[store.selection.path.length-1].index == 0"
 								@click="store.moveUpward"
+								title="Move upward in list"
 							>
 								<span>&uarr;</span>
 							</button>
@@ -462,6 +467,7 @@
 									store.selection.path.length < 2 && (store.selection.path[store.selection.path.length-1].index == store.conf.events.length-1) ||
 									store.selection.path.length > 1 && (store.selection.path[store.selection.path.length-1].index == store.selection.path[store.selection.path.length-2].event.members.length-1)"
 								@click="store.moveDownward"
+								title="Move downward in list"
 							>
 								<span>&darr;</span>
 							</button>
@@ -495,6 +501,7 @@
 								class="leftmost"
 								:disabled="!store.selection.event || store.selection.event.type != 'event' || store.selection.event.sequence < 2"
 								@click="store.selection.event.sequence--;"
+								title="Move to previous sequence slot"
 							>
 								<span>&uarr;</span>
 							</button>
@@ -503,6 +510,7 @@
 								class="rightmost"
 								:disabled="!store.selection.event || store.selection.event.type != 'event' || store.selection.event.sequence > 9"
 								@click="store.selection.event.sequence++;"
+								title="Move to next sequence slot"
 							>
 								<span>&darr;</span>
 							</button>
@@ -544,7 +552,7 @@
 						</div>
 						<label class="switch">
 							<input type="checkbox" id="properties_enable" v-model="store.selection.event.enable">
-							<span class="slider"></span>
+							<span class="slider" :title="(store.selection.event.enable?'Click to disable':'Click to enable')"></span>
 						</label>
 					</div>
 					<div id="properties">
