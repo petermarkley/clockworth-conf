@@ -411,516 +411,552 @@
 				box-shadow: 0 4px 8px rgba(0,0,0,0.5);
 				z-index: 0;
 				width: 600px;
+				display: flex;
+				flex-direction: column;
+				gap: 16px;
 			}
 			[v-cloak] { display: none }
 		</style>
 	</head>
-	<body id="app" :style="(store.modal.show?'position:fixed;width:100vw;top:'+(-store.modal.scroll)+'px':'')">
+	<body>
 		<div id="backdrop"></div>
-		<main>
-			<div style="display:flex;flex-direction:column;align-items:center;margin-bottom:16px;">
-				<h1>Clockworth Configurator</h1>
-				<p>Widget for configuring your own <a href="https://github.com/petermarkley/clockworth">Clockworth robotic clock</a>.</p>
-				<img src="img/clockworth-photo-alpha-300px.png" alt="Clockworth" style="width:200px;height:auto;"/>
-			</div>
-			<template v-if="page==0">
-				<div style="display:flex;flex-direction:column;align-items:center;margin-bottom:16px;gap:16px;">
-					<p>Lorem ipsum dolor sit amet.</p>
-					<div style="display:flex;flex-direction:column;justify-content:space-between;gap:12px;width:60%;">
-						<button style="flex:1;display:flex;flex-direction:row;gap:8px;font-size:18px;" @click="importDefault(); page++;">
-							<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
-								<use href="img/icons.svg#bookmark"/>
-							</svg>
-							<span>Use Default</span>
-						</button>
-						<button style="flex:1;display:flex;flex-direction:row;gap:8px;font-size:18px;" @click="uploadConf();">
-							<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
-								<use href="img/icons.svg#download" style="transform:scaleY(-1);transform-origin:center;"/>
-							</svg>
-							<span>Upload</span>
-						</button>
-						<button style="flex:1;display:flex;flex-direction:row;gap:8px;font-size:18px;" @click="page++;">
-							<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
-								<use href="img/icons.svg#page"/>
-							</svg>
-							<span>Start from Scratch</span>
-						</button>
-					</div>
+		<div id="app" :style="(store.modal.show?'position:fixed;width:100vw;top:'+(-store.modal.scroll)+'px':'')">
+			<main>
+				<div style="display:flex;flex-direction:column;align-items:center;margin-bottom:16px;">
+					<h1>Clockworth Configurator</h1>
+					<p>Widget for configuring your own <a href="https://github.com/petermarkley/clockworth">Clockworth robotic clock</a>.</p>
+					<img src="img/clockworth-photo-alpha-300px.png" alt="Clockworth" style="width:200px;height:auto;"/>
 				</div>
-			</template>
-			<template v-else-if="page==1">
-				<div style="display:flex;flex-direction:row;gap:16px;margin-bottom:24px;">
-					<div style="width:100%;">
-						<h2>Chime Events</h2>
-						<div class="inset" style="height:300px;">
-							<ul id="chime_events">
-								<chime-event
-									v-for="(event, index) in store.conf.events"
-									:event="event"
-									:index="index"
-									:depth="0"
-									:has-next-sibling="false"
-									:path="[]"
-								></chime-event>
-							</ul>
-						</div>
-						<div class="toolbar">
-							<button
-								id="toolbar_add"
-								class="leftmost"
-								@click="store.newEvent"
-								title="Add new chime object"
-							>
-								<span>+</span>
+				<template v-if="page==0">
+					<div style="display:flex;flex-direction:column;align-items:center;margin-bottom:16px;gap:16px;">
+						<p>Lorem ipsum dolor sit amet.</p>
+						<div style="display:flex;flex-direction:column;justify-content:space-between;gap:12px;width:60%;">
+							<button style="flex:1;display:flex;flex-direction:row;gap:8px;font-size:18px;" @click="importDefault(); page++;">
+								<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
+									<use href="img/icons.svg#bookmark"/>
+								</svg>
+								<span>Use Default</span>
 							</button>
-							<button
-								id="toolbar_remove"
-								:disabled="!store.selection.event"
-								@click="store.deleteEvent"
-								title="Delete this chime object"
-							>
-								<span>-</span>
+							<button style="flex:1;display:flex;flex-direction:row;gap:8px;font-size:18px;" @click="uploadConf();">
+								<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
+									<use href="img/icons.svg#download" style="transform:scaleY(-1);transform-origin:center;"/>
+								</svg>
+								<span>Upload</span>
 							</button>
-							<button
-								id="toolbar_unindent"
-								:disabled="!store.selection.event || store.selection.path.length == 0"
-								@click="store.decreaseIndent"
-								title="Decrease indent"
-							>
-								<span>&larr;</span>
-							</button>
-							<button
-								id="toolbar_indent"
-								:disabled="!store.selection.event"
-								@click="store.increaseIndent"
-								title="Increase indent"
-							>
-								<span>&rarr;</span>
-							</button>
-							<button
-								id="toolbar_up"
-								:disabled="!store.selection.event || store.selection.path[store.selection.path.length-1].index == 0"
-								@click="store.moveUpward"
-								title="Move upward in list"
-							>
-								<span>&uarr;</span>
-							</button>
-							<button
-								id="toolbar_down"
-								class="rightmost"
-								:disabled="!store.selection.event ||
-									store.selection.path.length < 2 && (store.selection.path[store.selection.path.length-1].index == store.conf.events.length-1) ||
-									store.selection.path.length > 1 && (store.selection.path[store.selection.path.length-1].index == store.selection.path[store.selection.path.length-2].event.members.length-1)"
-								@click="store.moveDownward"
-								title="Move downward in list"
-							>
-								<span>&darr;</span>
+							<button style="flex:1;display:flex;flex-direction:row;gap:8px;font-size:18px;" @click="page++;">
+								<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
+									<use href="img/icons.svg#page"/>
+								</svg>
+								<span>Start from Scratch</span>
 							</button>
 						</div>
 					</div>
-					<div style="width:100%;">
-						<h2>Collision Sequence</h2>
-						<div class="inset" style="height:300px;">
-							<ol id="collision_sequence">
-								<li v-for="(n, i) in 10">
-									<span>Slot {{ n }}:</span>
-									<ul class="collision-list">
-										<li
-											v-for="item in getCollisionList(n,store.conf.events,true,[])"
-											@click="store.select"
-											:data-path="JSON.stringify(item.path)"
-											:class="'collision-item selectable'+(store.selection.event===item.event?' selected':'')+(item.enable?'':' disable')"
-										>
-											<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
-												<use href="img/icons.svg#music"/>
-											</svg>
-											<span>{{ item.event.label }}</span>
-										</li>
-									</ul>
-								</li>
-							</ol>
+				</template>
+				<template v-else-if="page==1">
+					<div style="display:flex;flex-direction:row;gap:16px;margin-bottom:24px;">
+						<div style="width:100%;">
+							<h2>Chime Events</h2>
+							<div class="inset" style="height:300px;">
+								<ul id="chime_events">
+									<chime-event
+										v-for="(event, index) in store.conf.events"
+										:event="event"
+										:index="index"
+										:depth="0"
+										:has-next-sibling="false"
+										:path="[]"
+									></chime-event>
+								</ul>
+							</div>
+							<div class="toolbar">
+								<button
+									id="toolbar_add"
+									class="leftmost"
+									@click="store.newEvent"
+									title="Add new chime object"
+								>
+									<span>+</span>
+								</button>
+								<button
+									id="toolbar_remove"
+									:disabled="!store.selection.event"
+									@click="store.deleteEvent"
+									title="Delete this chime object"
+								>
+									<span>-</span>
+								</button>
+								<button
+									id="toolbar_unindent"
+									:disabled="!store.selection.event || store.selection.path.length == 0"
+									@click="store.decreaseIndent"
+									title="Decrease indent"
+								>
+									<span>&larr;</span>
+								</button>
+								<button
+									id="toolbar_indent"
+									:disabled="!store.selection.event"
+									@click="store.increaseIndent"
+									title="Increase indent"
+								>
+									<span>&rarr;</span>
+								</button>
+								<button
+									id="toolbar_up"
+									:disabled="!store.selection.event || store.selection.path[store.selection.path.length-1].index == 0"
+									@click="store.moveUpward"
+									title="Move upward in list"
+								>
+									<span>&uarr;</span>
+								</button>
+								<button
+									id="toolbar_down"
+									class="rightmost"
+									:disabled="!store.selection.event ||
+										store.selection.path.length < 2 && (store.selection.path[store.selection.path.length-1].index == store.conf.events.length-1) ||
+										store.selection.path.length > 1 && (store.selection.path[store.selection.path.length-1].index == store.selection.path[store.selection.path.length-2].event.members.length-1)"
+									@click="store.moveDownward"
+									title="Move downward in list"
+								>
+									<span>&darr;</span>
+								</button>
+							</div>
 						</div>
-						<div class="toolbar">
-							<button
-								id="toolbar_prev"
-								class="leftmost"
-								:disabled="!store.selection.event || store.selection.event.type != 'event' || store.selection.event.sequence < 2"
-								@click="store.selection.event.sequence--;"
-								title="Move to previous sequence slot"
-							>
-								<span>&uarr;</span>
-							</button>
-							<button
-								id="toolbar_next"
-								class="rightmost"
-								:disabled="!store.selection.event || store.selection.event.type != 'event' || store.selection.event.sequence > 9"
-								@click="store.selection.event.sequence++;"
-								title="Move to next sequence slot"
-							>
-								<span>&darr;</span>
-							</button>
-						</div>
-					</div>
-				</div>
-				<div>
-					<div v-if="store.selection.event" style="display:flex;flex-direction:row;gap:16px;margin-bottom:16px;">
-						<div class="properties_heading">
-							<h3 style="display:flex;flex-direction:row;gap:16px;align-items:center;">
-								<a @click="store.deselect" title="Deselect" style="font-size:24px;">
-									<svg viewBox="0 0 20 20" style="width:1em;height:1em;">
-										<use href="img/icons.svg#x-circle"/>
-									</svg>
-								</a>
-								<span id="breadcrumb">
-									<template v-for="(item, i) in store.selection.path">
-										<span v-if="i<(store.selection.path.length-1)">
-											<a @click="store.select" class="selectable" :data-path="JSON.stringify(store.selection.path.slice(0,i+1))">
+						<div style="width:100%;">
+							<h2>Collision Sequence</h2>
+							<div class="inset" style="height:300px;">
+								<ol id="collision_sequence">
+									<li v-for="(n, i) in 10">
+										<span>Slot {{ n }}:</span>
+										<ul class="collision-list">
+											<li
+												v-for="item in getCollisionList(n,store.conf.events,true,[])"
+												@click="store.select"
+												:data-path="JSON.stringify(item.path)"
+												:class="'collision-item selectable'+(store.selection.event===item.event?' selected':'')+(item.enable?'':' disable')"
+											>
 												<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
-													<use href="img/icons.svg#folder"/>
+													<use href="img/icons.svg#music"/>
 												</svg>
 												<span>{{ item.event.label }}</span>
-											</a>
-											<span>&rarr;</span>
-										</span>
-									</template>
-								</span>
-								<span style="display:inline-flex;flex-direction:row;gap:8px;align-items:center;">
-									<svg v-if="store.selection.event.type=='group'" viewBox="0 0 24 24" style="width:1em;height:1em;">
-										<use href="img/icons.svg#folder"/>
-									</svg>
-									<svg v-else-if="store.selection.event.type=='event'" viewBox="0 0 24 24" style="width:1em;height:1em;">
-										<use href="img/icons.svg#music"/>
-									</svg>
-									<input type="text" id="properties_title" v-model="store.selection.event.label"/>
-								</span>
-							</h3>
+											</li>
+										</ul>
+									</li>
+								</ol>
+							</div>
+							<div class="toolbar">
+								<button
+									id="toolbar_prev"
+									class="leftmost"
+									:disabled="!store.selection.event || store.selection.event.type != 'event' || store.selection.event.sequence < 2"
+									@click="store.selection.event.sequence--;"
+									title="Move to previous sequence slot"
+								>
+									<span>&uarr;</span>
+								</button>
+								<button
+									id="toolbar_next"
+									class="rightmost"
+									:disabled="!store.selection.event || store.selection.event.type != 'event' || store.selection.event.sequence > 9"
+									@click="store.selection.event.sequence++;"
+									title="Move to next sequence slot"
+								>
+									<span>&darr;</span>
+								</button>
+							</div>
 						</div>
-						<label class="switch">
-							<input type="checkbox" id="properties_enable" v-model="store.selection.event.enable">
-							<span class="slider" :title="(store.selection.event.enable?'Click to disable':'Click to enable')"></span>
-						</label>
 					</div>
-					<div id="properties">
-						
-					</div>
-				</div>
-				<div style="display:flex;flex-direction:row;justify-content:flex-end;">
-					<button @click="page++;" style="display:flex;flex-direction:row;gap:8px;font-size:18px;">
-						<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
-							<use href="img/icons.svg#export"/>
-						</svg>
-						<span>Export JSON</span>
-					</button>
-				</div>
-			</template>
-			<template v-else-if="page==2">
-				<div style="display:flex;flex-direction:column;gap:12px;">
-					<div style="display:flex;flex-direction:row;justify-content:flex-start;">
-						<button class="secondary" @click="page--;" style="font-size:18px;">&larr; Back</button>
-					</div>
-					<textarea id="json_output" readonly>{{ jsonOutput }}</textarea>
-					<div style="display:flex;flex-direction:row;justify-content:space-between;gap:12px;">
-						<button style="flex:1;font-size:18px;" @click="copyJsonOutput();" :disabled="clipboardFeedback">
-							<div v-if="clipboardFeedback" style="display:flex;flex-direction:row;gap:8px;">
-								<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
-									<use href="img/icons.svg#checkmark"/>
-								</svg>
-								<span>Copied!</span>
+					<div>
+						<div v-if="store.selection.event" style="display:flex;flex-direction:row;gap:16px;margin-bottom:16px;">
+							<div class="properties_heading">
+								<h3 style="display:flex;flex-direction:row;gap:16px;align-items:center;">
+									<a @click="store.deselect" title="Deselect" style="font-size:24px;">
+										<svg viewBox="0 0 20 20" style="width:1em;height:1em;">
+											<use href="img/icons.svg#x-circle"/>
+										</svg>
+									</a>
+									<span id="breadcrumb">
+										<template v-for="(item, i) in store.selection.path">
+											<span v-if="i<(store.selection.path.length-1)">
+												<a @click="store.select" class="selectable" :data-path="JSON.stringify(store.selection.path.slice(0,i+1))">
+													<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
+														<use href="img/icons.svg#folder"/>
+													</svg>
+													<span>{{ item.event.label }}</span>
+												</a>
+												<span>&rarr;</span>
+											</span>
+										</template>
+									</span>
+									<span style="display:inline-flex;flex-direction:row;gap:8px;align-items:center;">
+										<svg v-if="store.selection.event.type=='group'" viewBox="0 0 24 24" style="width:1em;height:1em;">
+											<use href="img/icons.svg#folder"/>
+										</svg>
+										<svg v-else-if="store.selection.event.type=='event'" viewBox="0 0 24 24" style="width:1em;height:1em;">
+											<use href="img/icons.svg#music"/>
+										</svg>
+										<input type="text" id="properties_title" v-model="store.selection.event.label"/>
+									</span>
+								</h3>
 							</div>
-							<div v-else style="display:flex;flex-direction:row;gap:8px;">
-								<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
-									<use href="img/icons.svg#clipboard"/>
-								</svg>
-								<span>Copy</span>
-							</div>
-						</button>
-						<button style="flex:1;display:flex;flex-direction:row;gap:8px;font-size:18px;" @click="downloadJsonOutput();">
+							<label class="switch">
+								<input type="checkbox" id="properties_enable" v-model="store.selection.event.enable">
+								<span class="slider" :title="(store.selection.event.enable?'Click to disable':'Click to enable')"></span>
+							</label>
+						</div>
+						<div id="properties">
+							
+						</div>
+					</div>
+					<div style="display:flex;flex-direction:row;justify-content:flex-end;">
+						<button @click="page++;" style="display:flex;flex-direction:row;gap:8px;font-size:18px;">
 							<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
-								<use href="img/icons.svg#download"/>
+								<use href="img/icons.svg#export"/>
 							</svg>
-							<span>Download</span>
+							<span>Export JSON</span>
 						</button>
 					</div>
+				</template>
+				<template v-else-if="page==2">
+					<div style="display:flex;flex-direction:column;gap:12px;">
+						<div style="display:flex;flex-direction:row;justify-content:flex-start;">
+							<button class="secondary" @click="page--;" style="font-size:18px;">&larr; Back</button>
+						</div>
+						<textarea id="json_output" readonly>{{ jsonOutput }}</textarea>
+						<div style="display:flex;flex-direction:row;justify-content:space-between;gap:12px;">
+							<button style="flex:1;font-size:18px;" @click="copyJsonOutput();" :disabled="clipboardFeedback">
+								<div v-if="clipboardFeedback" style="display:flex;flex-direction:row;gap:8px;">
+									<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
+										<use href="img/icons.svg#checkmark"/>
+									</svg>
+									<span>Copied!</span>
+								</div>
+								<div v-else style="display:flex;flex-direction:row;gap:8px;">
+									<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
+										<use href="img/icons.svg#clipboard"/>
+									</svg>
+									<span>Copy</span>
+								</div>
+							</button>
+							<button style="flex:1;display:flex;flex-direction:row;gap:8px;font-size:18px;" @click="downloadJsonOutput();">
+								<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
+									<use href="img/icons.svg#download"/>
+								</svg>
+								<span>Download</span>
+							</button>
+						</div>
+					</div>
+				</template>
+			</main>
+			<footer>
+				<p>Copyright &copy; 2025 by Peter Markley.<br>Code published <a href="https://github.com/petermarkley/clockworth-conf">on Github</a> under the <a href="https://www.gnu.org/licenses/lgpl-3.0.en.html">GNU Lesser General Public License v3.0</a>.</p>
+			</footer>
+			<div v-cloak v-show="store.modal.show">
+				<div id="modal" :style="'top:'+(store.modal.scroll)+'px'">
+					<div id="modal-bg" @click="store.hideModal"></div>
+					<form id="modal-panel">
+						<div style="display:flex;flex-direction:row;gap:16px;align-items:center;">
+							<a @click="store.hideModal" style="font-size:28px;">
+								<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
+									<use href="img/icons.svg#x"/>
+								</svg>
+							</a>
+							<h2>{{ store.modal.title }}</h2>
+						</div>
+						<div>Lorem ipsum dolor sit amet.</div>
+						<div style="display:flex;flex-direction:row;gap:12px;">
+							<button style="flex:1;" @click="store.hideModal" class="secondary">{{ store.modal.cancelLabel }}</button>
+							<button style="flex:1;" @click.prevent="store.modal.confirmFunction(); store.hideModal();">{{ store.modal.buttonLabel }}</button>
+						</div>
+					</form>
 				</div>
-			</template>
-		</main>
-		<footer>
-			<p>Copyright &copy; 2025 by Peter Markley.<br>Code published <a href="https://github.com/petermarkley/clockworth-conf">on Github</a> under the <a href="https://www.gnu.org/licenses/lgpl-3.0.en.html">GNU Lesser General Public License v3.0</a>.</p>
-		</footer>
-		<div v-cloak v-show="store.modal.show">
-			<div id="modal" :style="'top:'+(store.modal.scroll)+'px'">
-				<div id="modal-bg" @click="store.hideModal"></div>
-				<form id="modal-panel">
-					<div>Lorem ipsum dolor sit amet.</div>
-				</form>
 			</div>
 		</div>
-<script type="module">
-  import { createApp, ref, reactive } from 'https://unpkg.com/vue@3.5.13/dist/vue.esm-browser.js'
-  
-  const store = reactive({
-    // This is the payload that this widget exists to build, the Clockworth config data
-    conf: {
-      location: "",
-      tick: true,
-      chime: true,
-      events: []
-    },
-    // Current GUI selection
-    selection: {
-      path: [],
-      event: null
-    },
-    // Modal state
-    modal: {
-      show: false,
-      title: "",
-      confirmFunction: null,
-      scroll: -1
-    },
-    // Update GUI selection
-    select(e) {
-      // get context from clicked DOM element
-      let bar = null;
-      if (e.target.classList.contains('selectable')) {
-        bar = e.target;
-      } else {
-        bar = e.target.closest('.selectable');
-      }
-      let path = JSON.parse(bar.dataset.path);
-      store.selection.path = path;
-      // follow path to specific selected item
-      let event = null;
-      let list = store.conf.events;
-      for (let i=0; i < path.length; i++) {
-        for (let j=0; j < list.length; j++) {
-          if (j==path[i].index) {
-            event = list[j];
-            store.selection.path[i].event = event;
-            list = event.members;
-            break;
-          }
-        }
-      }
-      store.selection.event = event;
-    },
-    // Reset GUI selection
-    deselect() {
-      store.selection.path = [];
-      store.selection.event = null;
-    },
-    // Show modal
-    showModal() {
-      store.modal.show = true;
-      store.modal.scroll = Math.round(window.scrollY);
-    },
-    // Hide modal
-    hideModal() {
-      store.modal.show = false;
-    },
-    // Add new chime event
-    newEvent() {
-      alert("add event");
-    },
-    // Delete selected chime event
-    deleteEvent() {
-      alert("delete event");
-    },
-    // Move chime event upward in hierarchy
-    decreaseIndent() {
-      alert("decrease indent");
-    },
-    // Move chime event downward in hierarchy
-    increaseIndent() {
-      alert("increase indent");
-    },
-    // Move selected chime event upward in list
-    moveUpward() {
-      alert("move upward");
-    },
-    // Move selected chime event downward in list
-    moveDownward() {
-      alert("move downward");
-    },
-  });
+		<script type="module">
+import { createApp, ref, reactive } from 'https://unpkg.com/vue@3.5.13/dist/vue.esm-browser.js'
 
-  // Root component
-  const app = createApp({
-    data() {
-      return {
-        // The widget has three pages, or steps, that the user progresses through
-        page: 0,
-        // Just a value used for fancy GUI feedback
-        clipboardFeedback: false
-      };
-    },
-    setup() {
-      return { store };
-    },
-    computed: {
-      // Serialized payload for when the user is finished
-      jsonOutput() {
-        return JSON.stringify(store.conf);
-      }
-    },
-    methods: {
-      // On page 0, if the user opts to start with a default config ...
-      importDefault() {
-        let xhr = new XMLHttpRequest();
-        let url = 'default.json';
-        //let url = 'https://raw.githubusercontent.com/petermarkley/clockworth-conf/refs/heads/master/default.json';
-        xhr.open('GET', url, true);
-        xhr.responseType = 'json';
-        xhr.onload = () => {
-          if (xhr.status === 200) {
-            store.conf = xhr.response;
-          } else {
-            console.log("HTTP response "+xhr.status);
-          }
-        };
-        xhr.send();
-      },
-      // On page 0, if the user opts to upload a pre-existing conf file ...
-      uploadConf() {
-        store.showModal();
-        this.page++;
-      },
-      // Return list of all chime events matching the given sequence slot, recursively searching groups
-      getCollisionList(n,events,enable,path) {
-        let list = [];
-        for (let i=0; i < events.length; i++) {
-          let newPath = path.concat({
-            index: i,
-            label: events[i].label
-          });
-          if (events[i].type == 'group') {
-            // for groups, descend and gather and matches within
-            list.push(
-              ...this.getCollisionList(
-                n,
-                events[i].members,
-                (enable && events[i].enable),
-                newPath
-              )
-            );
-          } else if (events[i].type == 'event') {
-            // if this is a match, add it
-            if (events[i].sequence == n) {
-              list.push({
-                enable: (enable && events[i].enable),
-                path: newPath,
-                event: events[i]
-              });
-            }
-          }
+const store = reactive({
+  // This is the payload that this widget exists to build, the Clockworth config data
+  conf: {
+    location: "",
+    tick: true,
+    chime: true,
+    events: []
+  },
+  // Current GUI selection
+  selection: {
+    path: [],
+    event: null
+  },
+  // Modal state
+  modal: {
+    show: false,
+    title: "",
+    confirmFunction: null,
+    scroll: -1,
+    buttonLabel: "Okay",
+    cancelLabel: "Cancel"
+  },
+  // Update GUI selection
+  select(e) {
+    // get context from clicked DOM element
+    let bar = null;
+    if (e.target.classList.contains('selectable')) {
+      bar = e.target;
+    } else {
+      bar = e.target.closest('.selectable');
+    }
+    let path = JSON.parse(bar.dataset.path);
+    store.selection.path = path;
+    // follow path to specific selected item
+    let event = null;
+    let list = store.conf.events;
+    for (let i=0; i < path.length; i++) {
+      for (let j=0; j < list.length; j++) {
+        if (j==path[i].index) {
+          event = list[j];
+          store.selection.path[i].event = event;
+          list = event.members;
+          break;
         }
-        return list;
-      },
-      // On page 2, if the user opts to copy payload to clipboard ...
-      copyJsonOutput() {
-        let element = document.getElementById("json_output");
-        element.select();
-        document.execCommand('copy');
-        this.clipboardFeedback = true;
-        setTimeout(() => {this.clipboardFeedback = false;}, 1000);
-      },
-      // On page 2, if the user opts to directly download the payload as a Clockworth-ready config file ...
-      downloadJsonOutput() {
-        let output = document.getElementById("json_output");
-        let anchor = document.createElement('a');
-        anchor.setAttribute('href', 'data:application/json,' + output.value);
-        anchor.setAttribute('download', "clockworth.json");
-        anchor.style.display = 'none';
-        document.body.appendChild(anchor);
-        anchor.click();
-        document.body.removeChild(anchor);
       }
     }
-  });
-  
-  // Component for a chime event (or group) in the master list (the pane on the left).
-  // If event.type=='group', this component is recursive.
-  app.component('chime-event', {
-    name: 'ChimeEvent',
-    props: [
-      'event', // the chime event
-      'index', // index in the parent's member list
-      'depth', // current depth of hierarchy
-      'has-next-sibling', // false if last in parent's member list
-      'path' // path from root of event hierarchy
-    ],
-    data() {
-      return {
-        open: true // GUI state to make groups collapsible
+    store.selection.event = event;
+  },
+  // Reset GUI selection
+  deselect() {
+    store.selection.path = [];
+    store.selection.event = null;
+  },
+  // Show modal
+  showModal({
+    title,
+    buttonLabel = "Okay",
+    cancelLabel = "Cancel",
+    confirmFunction
+  }) {
+    store.modal.show = true;
+    store.modal.scroll = Math.round(window.scrollY);
+    if (typeof title !== "undefined" && title !== null) {
+      store.modal.title = title;
+    }
+    if (typeof confirmFunction !== "undefined" && confirmFunction !== null) {
+      store.modal.confirmFunction = confirmFunction;
+    }
+  },
+  // Hide modal
+  hideModal() {
+    store.modal.show = false;
+    store.modal.title = "";
+    store.modal.confirmFunction = null;
+  },
+  // Add new chime event
+  newEvent() {
+    alert("add event");
+  },
+  // Delete selected chime event
+  deleteEvent() {
+    alert("delete event");
+  },
+  // Move chime event upward in hierarchy
+  decreaseIndent() {
+    alert("decrease indent");
+  },
+  // Move chime event downward in hierarchy
+  increaseIndent() {
+    alert("increase indent");
+  },
+  // Move selected chime event upward in list
+  moveUpward() {
+    alert("move upward");
+  },
+  // Move selected chime event downward in list
+  moveDownward() {
+    alert("move downward");
+  },
+});
+
+// Root component
+const app = createApp({
+  data() {
+    return {
+      // The widget has three pages, or steps, that the user progresses through
+      page: 0,
+      // Just a value used for fancy GUI feedback
+      clipboardFeedback: false
+    };
+  },
+  setup() {
+    return { store };
+  },
+  computed: {
+    // Serialized payload for when the user is finished
+    jsonOutput() {
+      return JSON.stringify(store.conf);
+    }
+  },
+  methods: {
+    // On page 0, if the user opts to start with a default config ...
+    importDefault() {
+      let xhr = new XMLHttpRequest();
+      let url = 'default.json';
+      //let url = 'https://raw.githubusercontent.com/petermarkley/clockworth-conf/refs/heads/master/default.json';
+      xhr.open('GET', url, true);
+      xhr.responseType = 'json';
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          store.conf = xhr.response;
+        } else {
+          console.log("HTTP response "+xhr.status);
+        }
       };
+      xhr.send();
     },
-    setup() {
-      return { store };
+    // On page 0, if the user opts to upload a pre-existing conf file ...
+    uploadConf() {
+      store.showModal({
+        title: "Upload Existing Config",
+        confirmFunction: () => {
+          this.page++;
+        }
+      });
     },
-    computed: {
-      // Augmented path that includes this chime event
-      nextPath() {
-        return this.path.concat({
-          index: this.index,
-          label: this.event.label,
-          hasNextSibling: this.hasNextSibling
+    // Return list of all chime events matching the given sequence slot, recursively searching groups
+    getCollisionList(n,events,enable,path) {
+      let list = [];
+      for (let i=0; i < events.length; i++) {
+        let newPath = path.concat({
+          index: i,
+          label: events[i].label
         });
+        if (events[i].type == 'group') {
+          // for groups, descend and gather and matches within
+          list.push(
+            ...this.getCollisionList(
+              n,
+              events[i].members,
+              (enable && events[i].enable),
+              newPath
+            )
+          );
+        } else if (events[i].type == 'event') {
+          // if this is a match, add it
+          if (events[i].sequence == n) {
+            list.push({
+              enable: (enable && events[i].enable),
+              path: newPath,
+              event: events[i]
+            });
+          }
+        }
       }
+      return list;
     },
-    template: '<li v-if="event.type == \'group\'" style="position:relative" :class="event.enable?\'\':\'disable\'"> \
-        <div class="event-heading"> \
-          <span :class="\'drawer-button \' + (open ? \'open\' : \'\')" @click="open = !open">&#x25B8;</span> \
-          <div :class="\'event-bar selectable\'+(store.selection.event===event?\' selected\':\'\')" @click="store.select" :data-path="JSON.stringify(nextPath)"> \
-            <span> \
-              <svg viewBox="0 0 24 24" style="width:1em;height:1em;"> \
-                <use href="img/icons.svg#folder"/> \
-              </svg> \
-            </span> \
-            <span>{{ event.label }}</span> \
-          </div> \
-          <svg v-if="!event.enable" viewBox="0 0 24 24" style="width:1em;height:1em;"> \
-            <use href="img/icons.svg#hidden"/> \
-          </svg> \
+    // On page 2, if the user opts to copy payload to clipboard ...
+    copyJsonOutput() {
+      let element = document.getElementById("json_output");
+      element.select();
+      document.execCommand('copy');
+      this.clipboardFeedback = true;
+      setTimeout(() => {this.clipboardFeedback = false;}, 1000);
+    },
+    // On page 2, if the user opts to directly download the payload as a Clockworth-ready config file ...
+    downloadJsonOutput() {
+      let output = document.getElementById("json_output");
+      let anchor = document.createElement('a');
+      anchor.setAttribute('href', 'data:application/json,' + output.value);
+      anchor.setAttribute('download', "clockworth.json");
+      anchor.style.display = 'none';
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+    }
+  }
+});
+
+// Component for a chime event (or group) in the master list (the pane on the left).
+// If event.type=='group', this component is recursive.
+app.component('chime-event', {
+  name: 'ChimeEvent',
+  props: [
+    'event', // the chime event
+    'index', // index in the parent's member list
+    'depth', // current depth of hierarchy
+    'has-next-sibling', // false if last in parent's member list
+    'path' // path from root of event hierarchy
+  ],
+  data() {
+    return {
+      open: true // GUI state to make groups collapsible
+    };
+  },
+  setup() {
+    return { store };
+  },
+  computed: {
+    // Augmented path that includes this chime event
+    nextPath() {
+      return this.path.concat({
+        index: this.index,
+        label: this.event.label,
+        hasNextSibling: this.hasNextSibling
+      });
+    }
+  },
+  template: '<li v-if="event.type == \'group\'" style="position:relative" :class="event.enable?\'\':\'disable\'"> \
+      <div class="event-heading"> \
+        <span :class="\'drawer-button \' + (open ? \'open\' : \'\')" @click="open = !open">&#x25B8;</span> \
+        <div :class="\'event-bar selectable\'+(store.selection.event===event?\' selected\':\'\')" @click="store.select" :data-path="JSON.stringify(nextPath)"> \
+          <span> \
+            <svg viewBox="0 0 24 24" style="width:1em;height:1em;"> \
+              <use href="img/icons.svg#folder"/> \
+            </svg> \
+          </span> \
+          <span>{{ event.label }}</span> \
         </div> \
-        <ul v-if="event.members.length > 0" :class="open ? \'open\':\'\'"> \
-          <chime-event v-for="(member, subindex) in event.members" :event="member" :index="subindex" :depth="depth+1" :has-next-sibling="subindex < event.members.length-1" :path="nextPath"></chime-event> \
-        </ul> \
-        <hierarchy-lines v-if="depth>0" :index="index" :depth="depth" :path="path"></hierarchy-lines> \
-      </li> \
-      <li v-else-if="event.type == \'event\'" style="position:relative" :class="event.enable?\'\':\'disable\'"> \
-        <div class="event-heading"> \
-          <div :class="\'event-bar selectable\'+(store.selection.event===event?\' selected\':\'\')" @click="store.select" :data-path="JSON.stringify(nextPath)"> \
-            <span> \
-              <svg viewBox="0 0 24 24" style="width:1em;height:1em;"> \
-                <use href="img/icons.svg#music"/> \
-              </svg> \
-            </span> \
-            <span>{{ event.label }}</span> \
-          </div> \
-          <svg v-if="!event.enable" viewBox="0 0 24 24" style="width:1em;height:1em;"> \
-            <use href="img/icons.svg#hidden"/> \
-          </svg> \
+        <svg v-if="!event.enable" viewBox="0 0 24 24" style="width:1em;height:1em;"> \
+          <use href="img/icons.svg#hidden"/> \
+        </svg> \
+      </div> \
+      <ul v-if="event.members.length > 0" :class="open ? \'open\':\'\'"> \
+        <chime-event v-for="(member, subindex) in event.members" :event="member" :index="subindex" :depth="depth+1" :has-next-sibling="subindex < event.members.length-1" :path="nextPath"></chime-event> \
+      </ul> \
+      <hierarchy-lines v-if="depth>0" :index="index" :depth="depth" :path="path"></hierarchy-lines> \
+    </li> \
+    <li v-else-if="event.type == \'event\'" style="position:relative" :class="event.enable?\'\':\'disable\'"> \
+      <div class="event-heading"> \
+        <div :class="\'event-bar selectable\'+(store.selection.event===event?\' selected\':\'\')" @click="store.select" :data-path="JSON.stringify(nextPath)"> \
+          <span> \
+            <svg viewBox="0 0 24 24" style="width:1em;height:1em;"> \
+              <use href="img/icons.svg#music"/> \
+            </svg> \
+          </span> \
+          <span>{{ event.label }}</span> \
         </div> \
-        <hierarchy-lines v-if="depth>0" :index="index" :depth="depth" :path="path"></hierarchy-lines> \
-      </li>'
-  });
-  
-  // Purely graphical component for drawing hierarchy lines
-  app.component('hierarchy-lines', {
-    name: 'HierarchyLines',
-    props: [
-      'depth', // current depth of hierarchy
-      'index', // index in the parent's member list
-      'path' // data about ancestors in the hierarchy
-    ],
-    template: '<template v-for="(item, i) in path"> \
-        <div v-if="item.hasNextSibling" class="hierarchy-parent" :style="\'left:\'+((depth-i+1)*-24)+\'px;\'"></div> \
-      </template> \
-      <div class="hierarchy-item" v-if="index==0" style="height:1em;top:0;"></div> \
-      <div class="hierarchy-item" v-else style="height:3em;top:-2em;"></div>'
-  });
-  
-  window.vm = app.mount('#app');
-</script>
+        <svg v-if="!event.enable" viewBox="0 0 24 24" style="width:1em;height:1em;"> \
+          <use href="img/icons.svg#hidden"/> \
+        </svg> \
+      </div> \
+      <hierarchy-lines v-if="depth>0" :index="index" :depth="depth" :path="path"></hierarchy-lines> \
+    </li>'
+});
+
+// Purely graphical component for drawing hierarchy lines
+app.component('hierarchy-lines', {
+  name: 'HierarchyLines',
+  props: [
+    'depth', // current depth of hierarchy
+    'index', // index in the parent's member list
+    'path' // data about ancestors in the hierarchy
+  ],
+  template: '<template v-for="(item, i) in path"> \
+      <div v-if="item.hasNextSibling" class="hierarchy-parent" :style="\'left:\'+((depth-i+1)*-24)+\'px;\'"></div> \
+    </template> \
+    <div class="hierarchy-item" v-if="index==0" style="height:1em;top:0;"></div> \
+    <div class="hierarchy-item" v-else style="height:3em;top:-2em;"></div>'
+});
+
+window.vm = app.mount('#app');
+		</script>
 	</body>
 </html>
