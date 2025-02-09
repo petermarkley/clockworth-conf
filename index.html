@@ -384,11 +384,40 @@
 				border-radius: 4px;
 				overflow-y: scroll;
 			}
+			#modal {
+				position: absolute;
+				overflow: hidden;
+				z-index: 20;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				width: 100vw;
+				height: 100vh;
+			}
+			#modal-bg {
+				position: absolute;
+				overflow: hidden;
+				background-color: #000;
+				opacity: 0.75;
+				cursor: pointer;
+				width: 100vw;
+				height: 100vh;
+			}
+			#modal-panel {
+				background-color: #323232;
+				padding: 16px;
+				border-radius: 8px;
+				box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+				z-index: 0;
+				width: 600px;
+			}
+			[v-cloak] { display: none }
 		</style>
 	</head>
-	<body>
+	<body id="app" :style="(store.modal.show?'position:fixed;width:100vw;top:'+(-store.modal.scroll)+'px':'')">
 		<div id="backdrop"></div>
-		<main id="app">
+		<main>
 			<div style="display:flex;flex-direction:column;align-items:center;margin-bottom:16px;">
 				<h1>Clockworth Configurator</h1>
 				<p>Widget for configuring your own <a href="https://github.com/petermarkley/clockworth">Clockworth robotic clock</a>.</p>
@@ -404,7 +433,7 @@
 							</svg>
 							<span>Use Default</span>
 						</button>
-						<button style="flex:1;display:flex;flex-direction:row;gap:8px;font-size:18px;" @click="uploadConf(); page++;">
+						<button style="flex:1;display:flex;flex-direction:row;gap:8px;font-size:18px;" @click="uploadConf();">
 							<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
 								<use href="img/icons.svg#download" style="transform:scaleY(-1);transform-origin:center;"/>
 							</svg>
@@ -618,6 +647,14 @@
 		<footer>
 			<p>Copyright &copy; 2025 by Peter Markley.<br>Code published <a href="https://github.com/petermarkley/clockworth-conf">on Github</a> under the <a href="https://www.gnu.org/licenses/lgpl-3.0.en.html">GNU Lesser General Public License v3.0</a>.</p>
 		</footer>
+		<div v-cloak v-show="store.modal.show">
+			<div id="modal" :style="'top:'+(store.modal.scroll)+'px'">
+				<div id="modal-bg" @click="store.hideModal"></div>
+				<form id="modal-panel">
+					<div>Lorem ipsum dolor sit amet.</div>
+				</form>
+			</div>
+		</div>
 <script type="module">
   import { createApp, ref, reactive } from 'https://unpkg.com/vue@3.5.13/dist/vue.esm-browser.js'
   
@@ -633,6 +670,13 @@
     selection: {
       path: [],
       event: null
+    },
+    // Modal state
+    modal: {
+      show: false,
+      title: "",
+      confirmFunction: null,
+      scroll: -1
     },
     // Update GUI selection
     select(e) {
@@ -664,6 +708,15 @@
     deselect() {
       store.selection.path = [];
       store.selection.event = null;
+    },
+    // Show modal
+    showModal() {
+      store.modal.show = true;
+      store.modal.scroll = Math.round(window.scrollY);
+    },
+    // Hide modal
+    hideModal() {
+      store.modal.show = false;
     },
     // Add new chime event
     newEvent() {
@@ -729,7 +782,8 @@
       },
       // On page 0, if the user opts to upload a pre-existing conf file ...
       uploadConf() {
-        alert("upload conf file");
+        store.showModal();
+        this.page++;
       },
       // Return list of all chime events matching the given sequence slot, recursively searching groups
       getCollisionList(n,events,enable,path) {
