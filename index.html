@@ -299,7 +299,7 @@
 				flex-direction: row;
 				justify-content: flex-start;
 				gap: 8px;
-				align-items: baseline;
+				align-items: center;
 			}
 			#properties_title {
 				appearance: none;
@@ -512,7 +512,12 @@
 				<div>
 					<div v-if="store.selection.event" style="display:flex;flex-direction:row;gap:16px;margin-bottom:16px;">
 						<div class="properties_heading">
-							<h3 style="display:flex;flex-direction:row;gap:16px;align-items:baseline;">
+							<h3 style="display:flex;flex-direction:row;gap:16px;align-items:center;">
+								<a @click="store.deselect" title="Deselect" style="font-size:24px;">
+									<svg viewBox="0 0 20 20" style="width:1em;height:1em;">
+										<use href="img/icons.svg#x"/>
+									</svg>
+								</a>
 								<span id="breadcrumb">
 									<template v-for="(item, i) in store.selection.path">
 										<span v-if="i<(store.selection.path.length-1)">
@@ -526,7 +531,7 @@
 										</span>
 									</template>
 								</span>
-								<span style="display:inline-flex;flex-direction:row;gap:8px;align-items:baseline;">
+								<span style="display:inline-flex;flex-direction:row;gap:8px;align-items:center;">
 									<svg v-if="store.selection.event.type=='group'" viewBox="0 0 24 24" style="width:1em;height:1em;">
 										<use href="img/icons.svg#folder"/>
 									</svg>
@@ -625,6 +630,11 @@
         }
       }
       store.selection.event = event;
+    },
+    // Reset GUI selection
+    deselect() {
+      store.selection.path = [];
+      store.selection.event = null;
     },
     // Add new chime event
     newEvent() {
