@@ -397,9 +397,25 @@
 			<template v-if="page==0">
 				<div style="display:flex;flex-direction:column;align-items:center;margin-bottom:16px;gap:16px;">
 					<p>Lorem ipsum dolor sit amet.</p>
-					<div style="display:flex;flex-direction:row;justify-content:space-between;gap:12px;width:100%;">
-						<button @click="importDefault(); page++;" style="flex:1;">Use Default</button>
-						<button @click="page++;" style="flex:1;">Start from Scratch</button>
+					<div style="display:flex;flex-direction:column;justify-content:space-between;gap:12px;width:60%;">
+						<button style="flex:1;display:flex;flex-direction:row;gap:8px;font-size:18px;" @click="importDefault(); page++;">
+							<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
+								<use href="img/icons.svg#bookmark"/>
+							</svg>
+							<span>Use Default</span>
+						</button>
+						<button style="flex:1;display:flex;flex-direction:row;gap:8px;font-size:18px;" @click="uploadConf(); page++;">
+							<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
+								<use href="img/icons.svg#download" style="transform:scaleY(-1);transform-origin:center;"/>
+							</svg>
+							<span>Upload</span>
+						</button>
+						<button style="flex:1;display:flex;flex-direction:row;gap:8px;font-size:18px;" @click="page++;">
+							<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
+								<use href="img/icons.svg#page"/>
+							</svg>
+							<span>Start from Scratch</span>
+						</button>
 					</div>
 				</div>
 			</template>
@@ -560,17 +576,22 @@
 					</div>
 				</div>
 				<div style="display:flex;flex-direction:row;justify-content:flex-end;">
-					<button @click="page++;">Export JSON</button>
+					<button @click="page++;" style="display:flex;flex-direction:row;gap:8px;font-size:18px;">
+						<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
+							<use href="img/icons.svg#export"/>
+						</svg>
+						<span>Export JSON</span>
+					</button>
 				</div>
 			</template>
 			<template v-else-if="page==2">
 				<div style="display:flex;flex-direction:column;gap:12px;">
 					<div style="display:flex;flex-direction:row;justify-content:flex-start;">
-						<button class="secondary" @click="page--;">&larr; Back</button>
+						<button class="secondary" @click="page--;" style="font-size:18px;">&larr; Back</button>
 					</div>
 					<textarea id="json_output" readonly>{{ jsonOutput }}</textarea>
 					<div style="display:flex;flex-direction:row;justify-content:space-between;gap:12px;">
-						<button style="flex:1;" @click="copyJsonOutput();" :disabled="clipboardFeedback">
+						<button style="flex:1;font-size:18px;" @click="copyJsonOutput();" :disabled="clipboardFeedback">
 							<div v-if="clipboardFeedback" style="display:flex;flex-direction:row;gap:8px;">
 								<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
 									<use href="img/icons.svg#checkmark"/>
@@ -584,7 +605,7 @@
 								<span>Copy</span>
 							</div>
 						</button>
-						<button style="flex:1;display:flex;flex-direction:row;gap:8px;" @click="downloadJsonOutput();">
+						<button style="flex:1;display:flex;flex-direction:row;gap:8px;font-size:18px;" @click="downloadJsonOutput();">
 							<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
 								<use href="img/icons.svg#download"/>
 							</svg>
@@ -705,6 +726,10 @@
           }
         };
         xhr.send();
+      },
+      // On page 0, if the user opts to upload a pre-existing conf file ...
+      uploadConf() {
+        alert("upload conf file");
       },
       // Return list of all chime events matching the given sequence slot, recursively searching groups
       getCollisionList(n,events,enable,path) {
