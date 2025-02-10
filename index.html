@@ -663,7 +663,7 @@
 						</div>
 						<div style="max-height:calc( 80vh - 140px );overflow-y:auto;">
 							<div v-if="store.modal.contentKey == 'uploadConf'">
-								<p>Hey this is my new content</p>
+								<input type="file" id="upload_conf_file" name="upload_conf_file" accept="application/json">
 							</div>
 							<div v-else-if="store.modal.contentKey == 'overlapSlotsHelp'">
 								<p style="margin-top:0;">Overlap slots let you control what happens if two or more chime events are triggered on the same minute.</p>
@@ -838,6 +838,22 @@ const app = createApp({
       store.showModal({
         title: "Upload Existing Config",
         confirmFunction: () => {
+          let inp = document.getElementById("upload_conf_file");
+          if (inp.files.length < 1) {
+            return;
+          }
+          let file = inp.files[0];
+          let xhr = new XMLHttpRequest();
+          xhr.open('GET', URL.createObjectURL(file), true);
+          xhr.responseType = 'json';
+          xhr.onload = () => {
+            if (xhr.status === 200) {
+              store.conf = xhr.response;
+            } else {
+              console.log("HTTP response "+xhr.status);
+            }
+          };
+          xhr.send();
           this.page++;
         },
         contentKey: 'uploadConf'
