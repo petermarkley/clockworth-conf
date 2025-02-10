@@ -666,6 +666,9 @@
 								<p style="margin:0;">Please only upload files that were created using this GUI.</p>
 								<input type="file" id="upload_conf_file" name="upload_conf_file" accept="application/json" style="margin-bottom:16px;">
 							</div>
+							<div v-else-if="store.modal.contentKey == 'newEvent'">
+								<p>New chime object</p>
+							</div>
 							<div v-else-if="store.modal.contentKey == 'overlapSlotsHelp'">
 								<p style="margin-top:0;">Overlap slots let you control what happens if two or more chime events are triggered on the same minute.</p>
 								<p>It works by these rules:</p>
@@ -774,7 +777,13 @@ const store = reactive({
   },
   // Add new chime event
   newEvent() {
-    alert("add event");
+    store.showModal({
+      title: "New Chime Object",
+      contentKey: 'newEvent',
+      confirmFunction: () => {
+        alert("Lorem ipsum dolor sit amet");
+      }
+    });
   },
   // Delete selected chime event
   deleteEvent() {
