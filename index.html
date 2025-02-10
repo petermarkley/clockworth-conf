@@ -662,8 +662,9 @@
 							<h2>{{ store.modal.title }}</h2>
 						</div>
 						<div style="max-height:calc( 80vh - 140px );overflow-y:auto;">
-							<div v-if="store.modal.contentKey == 'uploadConf'">
-								<input type="file" id="upload_conf_file" name="upload_conf_file" accept="application/json">
+							<div v-if="store.modal.contentKey == 'uploadConf'" style="display:flex;flex-direction:column;gap:32px;align-items:center;">
+								<p style="margin:0;">Please only upload files that were created using this GUI.</p>
+								<input type="file" id="upload_conf_file" name="upload_conf_file" accept="application/json" style="margin-bottom:16px;">
 							</div>
 							<div v-else-if="store.modal.contentKey == 'overlapSlotsHelp'">
 								<p style="margin-top:0;">Overlap slots let you control what happens if two or more chime events are triggered on the same minute.</p>
