@@ -843,8 +843,9 @@ const app = createApp({
             return;
           }
           let file = inp.files[0];
+          let url = URL.createObjectURL(file);
           let xhr = new XMLHttpRequest();
-          xhr.open('GET', URL.createObjectURL(file), true);
+          xhr.open('GET', url, true);
           xhr.responseType = 'json';
           xhr.onload = () => {
             if (xhr.status === 200) {
@@ -852,6 +853,7 @@ const app = createApp({
             } else {
               console.log("HTTP response "+xhr.status);
             }
+            URL.revokeObjectURL(url);
           };
           xhr.send();
           this.page++;
