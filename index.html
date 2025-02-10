@@ -428,7 +428,7 @@
 								</svg>
 								<span>Use Default</span>
 							</button>
-							<button style="flex:1;display:flex;flex-direction:row;gap:8px;font-size:18px;" @click="uploadConf();">
+							<button style="flex:1;display:flex;flex-direction:row;gap:8px;font-size:18px;" @click="uploadConf">
 								<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
 									<use href="img/icons.svg#download" style="transform:scaleY(-1);transform-origin:center;"/>
 								</svg>
@@ -514,7 +514,14 @@
 							</div>
 						</div>
 						<div style="width:100%;">
-							<h2>Collision Sequence</h2>
+							<h2 style="display:flex;flex-direction:row;justify-content:center;align-items:center;gap:16px;">
+								<span>Overlap Slots</span>
+								<a @click="overlapSlotsHelp" title="What are &quot;Overlap Slots?&quot;" style="display:flex;">
+									<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
+										<use href="img/icons.svg#help"/>
+									</svg>
+								</a>
+							</h2>
 							<div class="inset" style="height:300px;">
 								<ol id="collision_sequence">
 									<li v-for="(n, i) in 10">
@@ -654,10 +661,25 @@
 							</a>
 							<h2>{{ store.modal.title }}</h2>
 						</div>
-						<div>Lorem ipsum dolor sit amet.</div>
+						<div v-if="store.modal.contentKey == 'uploadConf'">
+							<p>Hey this is my new content</p>
+						</div>
+						<div v-else-if="store.modal.contentKey == 'overlapSlotsHelp'">
+							<p style="margin-top:0;">Overlap slots let you control what happens if two or more chime events are triggered on the same minute.</p>
+							<ul style="display:flex;flex-direction:column;gap:16px;">
+								<li>Each minute, Clockworth steps through the sequence of 10 slots. For each slot, it plays either nothing or a <strong>maximum of one matching chime.</strong></li>
+								<li>If two or more chimes match on the same minute in the <em>same</em> slot, only the one shown last will play; this will <strong>override the others.</strong></li>
+								<li>If two or more chimes match on the same minute in <em>different</em> slots, they will play <strong>in the order of their slot number.</strong></li>
+							</ul>
+							<p>If you know that two chimes will never match on the same minute, then putting them in the same slot together will essentially have no effect. For example, we know that the 1:00 chime and the 2:00 chime <em>by definition</em> can never both trigger at once. Likewise with any sunset chime and any sunrise chime.</p>
+							<p>On the other hand, a sunrise chime might plausibly overlap with almost any chime in the "Westminster Quarters" group. Therefore, placing this in a later slot will ensure they can both play when appropriate: the sunrise chime after the Westminster Quarter chime.</p>
+						</div>
 						<div style="display:flex;flex-direction:row;gap:12px;">
 							<button style="flex:1;" @click.prevent="store.hideModal();" class="secondary">{{ store.modal.cancelLabel }}</button>
-							<button style="flex:1;" @click.prevent="store.modal.confirmFunction(); store.hideModal();">{{ store.modal.buttonLabel }}</button>
+							<button
+								style="flex:1;"
+								@click.prevent="if (store.modal.confirmFunction !== null) {store.modal.confirmFunction();} store.hideModal();"
+							>{{ store.modal.buttonLabel }}</button>
 						</div>
 					</form>
 				</div>
@@ -686,7 +708,8 @@ const store = reactive({
     confirmFunction: null,
     scroll: -1,
     buttonLabel: "Okay",
-    cancelLabel: "Cancel"
+    cancelLabel: "Cancel",
+    contentKey: null
   },
   // Update GUI selection
   select(e) {
@@ -724,9 +747,11 @@ const store = reactive({
     title,
     buttonLabel = "Okay",
     cancelLabel = "Cancel",
-    confirmFunction
+    confirmFunction,
+    contentKey
   }) {
     store.modal.show = true;
+    store.modal.contentKey = contentKey;
     store.modal.scroll = Math.round(window.scrollY);
     if (typeof title !== "undefined" && title !== null) {
       store.modal.title = title;
@@ -809,7 +834,16 @@ const app = createApp({
         title: "Upload Existing Config",
         confirmFunction: () => {
           this.page++;
-        }
+        },
+        contentKey: 'uploadConf'
+      });
+    },
+    // Show "Overlap Slots" help message
+    overlapSlotsHelp() {
+      store.showModal({
+        title: "What are \"Overlap Slots?\"",
+        confirmFunction: null,
+        contentKey: 'overlapSlotsHelp'
       });
     },
     // Return list of all chime events matching the given sequence slot, recursively searching groups
