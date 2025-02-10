@@ -661,19 +661,23 @@
 							</a>
 							<h2>{{ store.modal.title }}</h2>
 						</div>
-						<div v-if="store.modal.contentKey == 'uploadConf'">
-							<p>Hey this is my new content</p>
-						</div>
-						<div v-else-if="store.modal.contentKey == 'overlapSlotsHelp'">
-							<p style="margin-top:0;">Overlap slots let you control what happens if two or more chime events are triggered on the same minute.</p>
-							<ul style="display:flex;flex-direction:column;gap:16px;">
-								<li>Each minute, Clockworth steps through the sequence of 10 slots. For each slot, it plays either nothing or a <strong>maximum of one matching chime.</strong></li>
-								<li>If two or more chimes match on the same minute in the <em>same</em> slot, only the one shown last will play; this will <strong>override the others.</strong></li>
-								<li>If two or more chimes match on the same minute in <em>different</em> slots, they will play <strong>in the order of their slot number.</strong></li>
-								<li>The order of chimes inside a given overlap slot is dictated by their order in the master list of chime events.</li>
-							</ul>
-							<p>If you know that two chimes will never match on the same minute, then putting them in the same slot together will essentially have no effect. For example, we know that the 1:00 chime and the 2:00 chime <em>by definition</em> can never both trigger at once. Likewise with any sunset chime and any sunrise chime.</p>
-							<p>On the other hand, a sunrise chime might plausibly overlap with almost any chime in the "Westminster Quarters" group. Therefore, placing this in a later slot will ensure they can both play when appropriate: the sunrise chime after the Westminster Quarter chime.</p>
+						<div style="max-height:calc( 80vh - 140px );overflow-y:auto;">
+							<div v-if="store.modal.contentKey == 'uploadConf'">
+								<p>Hey this is my new content</p>
+							</div>
+							<div v-else-if="store.modal.contentKey == 'overlapSlotsHelp'">
+								<p style="margin-top:0;">Overlap slots let you control what happens if two or more chime events are triggered on the same minute.</p>
+								<p>It works by these rules:</p>
+								<ul style="display:flex;flex-direction:column;gap:16px;">
+									<li>Each minute, Clockworth steps through the sequence of 10 slots. For each slot, it plays either nothing or a <strong>maximum of one matching chime.</strong></li>
+									<li>If two or more chimes match on the same minute in the <em>same</em> slot, only the one shown last will play; this will <strong>override the others.</strong></li>
+									<li>If two or more chimes match on the same minute in <em>different</em> slots, they will play <strong>in the order of their slot number.</strong></li>
+									<li>The order of chimes inside a given overlap slot is dictated by their order in the master list of chime events.</li>
+								</ul>
+								<p>Let's take a more practical look at what all that means &hellip;</p>
+								<p>If you know that two chimes will never match on the same minute, then putting them in the same slot together will essentially have no effect. For example, we know that the 1:00 chime and the 2:00 chime <em>by definition</em> can never both trigger at once. Likewise with any sunset chime and any sunrise chime.</p>
+								<p>On the other hand, a sunrise chime might plausibly overlap with almost any chime in the "Westminster Quarters" group. Therefore, placing this in a later slot will ensure they can both play when appropriate: the sunrise chime after the Westminster Quarter chime.</p>
+							</div>
 						</div>
 						<div style="display:flex;flex-direction:row;gap:12px;">
 							<button style="flex:1;" @click.prevent="store.hideModal();" class="secondary">{{ store.modal.cancelLabel }}</button>
