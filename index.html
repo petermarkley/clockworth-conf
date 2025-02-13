@@ -407,6 +407,38 @@
 				flex-direction: column;
 				gap: 16px;
 			}
+			#modal-panel fieldset {
+				border-radius: 16px;
+				border: 2px solid #4d4d4c;
+				position: relative;
+				padding: 24px;
+				margin: 0.5em 0 0 0;
+				overflow: visible;
+				display: flex;
+				flex-direction: row;
+				gap: 24px;
+				justify-content: center;
+				align-items: center;
+			}
+			#modal-panel fieldset h4 {
+				margin: 0;
+				padding: 0 8px;
+				position: absolute;
+				top: -0.75em;
+				left: 16px;
+				background-color: #323232;
+			}
+			input[type="text"] {
+				appearance: none;
+				border: none;
+				font-size: 19px;
+				color: #b6b6b6;
+				font-family: inherit;
+				background-color: #2c2c2c;
+				box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+				padding: 8px;
+				border-radius: 4px;
+			}
 			[v-cloak] { display: none }
 		</style>
 	</head>
@@ -666,8 +698,30 @@
 								<p style="margin:0;">Please only upload files that were created using this GUI.</p>
 								<input type="file" id="upload_conf_file" name="upload_conf_file" accept="application/json" style="margin-bottom:16px;">
 							</div>
-							<div v-else-if="store.modal.contentKey == 'newEvent'">
-								<p>New chime object</p>
+							<div v-else-if="store.modal.contentKey == 'newEvent'" style="display:flex;flex-direction:column;gap:16px;">
+								<fieldset>
+									<h4>Type</h4>
+									<div title="Group" style="display:flex;flex-direction:row;gap:8px;align-items:center;cursor:pointer;">
+										<input type="radio" id="newevent_type_group" name="newevent_type" value="group" style="cursor:pointer;"/>
+										<label for="newevent_type_group" style="font-size:54px;cursor:pointer;">
+											<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
+												<use href="img/icons.svg#folder"/>
+											</svg>
+										</label>
+									</div>
+									<div title="Event" style="display:flex;flex-direction:row;gap:8px;align-items:center;cursor:pointer;">
+										<input type="radio" id="newevent_type_event" name="newevent_type" value="event" style="cursor:pointer;" checked/>
+										<label for="newevent_type_event" style="font-size:54px;cursor:pointer;">
+											<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
+												<use href="img/icons.svg#music"/>
+											</svg>
+										</label>
+									</div>
+								</fieldset>
+								<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;padding:8px;">
+									<label>Label</label>
+									<input type="text" id="newevent_label" name="newevent_label" value="(Untitled)"/>
+								</div>
 							</div>
 							<div v-else-if="store.modal.contentKey == 'overlapSlotsHelp'">
 								<p style="margin-top:0;">Overlap slots let you control what happens if two or more chime events are triggered on the same minute.</p>
