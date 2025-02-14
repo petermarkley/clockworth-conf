@@ -1128,7 +1128,7 @@ app.component('hierarchy-lines', {
     'path' // data about ancestors in the hierarchy
   ],
   template: '<template v-for="(item, i) in path"> \
-      <div v-if="item.hasNextSibling" class="hierarchy-parent" :style="\'left:\'+((depth-i+1)*-24)+\'px;\'"></div> \
+      <div v-if="item.hasNextSibling" class="hierarchy-parent" :style="\'left:\'+((depth-i+1)*-26+4)+\'px;\'"></div> \
     </template> \
     <div class="hierarchy-item" v-if="index==0" style="height:1em;top:0;"></div> \
     <div class="hierarchy-item" v-else style="height:3em;top:-2em;"></div>'
