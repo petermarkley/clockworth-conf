@@ -865,7 +865,43 @@ const store = reactive({
       title: "New Chime Object",
       contentKey: 'newEvent',
       confirmFunction: () => {
-        alert("Lorem ipsum dolor sit amet");
+        // collect data from form
+        const form = document.getElementById("modal-panel");
+        const data = new FormData(form);
+        const parentOption = document.querySelector("#newevent_parent").selectedOptions[0];
+        const parentPath = JSON.parse(parentOption.dataset.path);
+        // descend tree to the selected parent
+        let parent = store.conf;
+        let prop = "events";
+        for (let i=0; i < parentPath.length; i++) {
+          parent = parent[prop][parentPath[i].index];
+          prop = "members";
+          // save this for later
+          parentPath[i].event = parent;
+        }
+        // define new chime object
+        const newObject = {
+          enable: true,
+          label: data.get('newevent_label'),
+          type: data.get('newevent_type')
+        };
+        if (data.get('newevent_type') == 'group') {
+          newObject.members = [];
+        } else {
+          newObject.sequence = 1;
+          newObject.match = {};
+          newObject.file = {};
+          //FIXME
+        }
+        // insert into parent list
+        parent[prop].push(newObject);
+        // select new object
+        store.selection.path = parentPath.concat({
+          index: parent[prop].length-1,
+          label: newObject.label,
+          event: newObject
+        });
+        store.selection.event = newObject;
       }
     });
   },
