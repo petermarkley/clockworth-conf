@@ -946,11 +946,50 @@ const store = reactive({
   },
   // Move selected chime event upward in list
   moveUpward() {
-    alert("move upward");
+    if (store.selection.event === null) {
+      return;
+    }
+    const pathEnd = store.selection.path[store.selection.path.length-1];
+    const index = pathEnd.index;
+    if (index < 1) {
+      return;
+    }
+    if (store.selection.path.length > 1) {
+      const parent = store.selection.path[store.selection.path.length-2].event;
+      const swap = parent.members[index-1];
+      parent.members[index-1] = parent.members[index];
+      parent.members[index] = swap;
+    } else {
+      const swap = store.conf.events[index-1];
+      store.conf.events[index-1] = store.conf.events[index];
+      store.conf.events[index] = swap;
+    }
+    pathEnd.index--;
   },
   // Move selected chime event downward in list
   moveDownward() {
-    alert("move downward");
+    if (store.selection.event === null) {
+      return;
+    }
+    const pathEnd = store.selection.path[store.selection.path.length-1];
+    const index = pathEnd.index;
+    if (store.selection.path.length > 1) {
+      const parent = store.selection.path[store.selection.path.length-2].event;
+      if (index >= parent.members.length-1) {
+        return;
+      }
+      const swap = parent.members[index+1];
+      parent.members[index+1] = parent.members[index];
+      parent.members[index] = swap;
+    } else {
+      if (index >= store.conf.length-1) {
+        return;
+      }
+      const swap = store.conf.events[index+1];
+      store.conf.events[index+1] = store.conf.events[index];
+      store.conf.events[index] = swap;
+    }
+    pathEnd.index++;
   },
 });
 
