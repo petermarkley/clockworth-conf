@@ -608,7 +608,7 @@
 									<span id="breadcrumb">
 										<template v-for="(item, i) in store.selection.path">
 											<span v-if="i<(store.selection.path.length-1)">
-												<a @click="store.select" class="selectable" :data-path="JSON.stringify(store.selection.path.slice(0,i+1))">
+												<a @click="store.select" class="selectable" :data-path="JSON.stringify(store.cleanPath().slice(0,i+1))">
 													<svg viewBox="0 0 24 24" style="width:1em;height:1em;">
 														<use href="img/icons.svg#folder"/>
 													</svg>
@@ -730,7 +730,7 @@
 											<option
 												v-if="item.event.type=='group'"
 												:value="i"
-												:data-path="JSON.stringify(store.selection.path.slice(0,i+1))"
+												:data-path="JSON.stringify(store.cleanPath().slice(0,i+1))"
 											>{{ item.event.label }}</option>
 										</template>
 									</select>
@@ -790,6 +790,19 @@ const store = reactive({
     buttonLabel: "Okay",
     cancelLabel: "Cancel",
     contentKey: null
+  },
+  // Returns a path object with no 'event' objects inside it
+  cleanPath() {
+    let cleanedPath = [];
+    let index = 0;
+    for (let i=0; i < store.selection.path.length; i++) {
+      cleanedPath[index] = JSON.parse(JSON.stringify(store.selection.path[i]));
+      if (typeof cleanedPath[index].event !== "undefined") {
+        delete cleanedPath[index].event;
+      }
+      index++;
+    }
+    return cleanedPath;
   },
   // Update GUI selection
   select(e) {
