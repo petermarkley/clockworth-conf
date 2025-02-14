@@ -743,6 +743,13 @@
 									<input type="text" id="newevent_label" name="newevent_label" value="(Untitled)"/>
 								</div>
 							</div>
+							<div v-else-if="store.modal.contentKey == 'deleteEvent'">
+								<p
+									v-if="store.selection.event !== null && store.selection.event.type == 'group'"
+									style="margin-top:0;"
+								>{{ getEventCount(store.selection.event) }} events inside this group will also be deleted.</p>
+								<p style="margin-top:0;">Are you sure?</p>
+							</div>
 							<div v-else-if="store.modal.contentKey == 'overlapSlotsHelp'">
 								<p style="margin-top:0;">Overlap slots let you control what happens if two or more chime events are triggered on the same minute.</p>
 								<p>It works by these rules:</p>
@@ -855,6 +862,8 @@ const store = reactive({
     if (typeof confirmFunction !== "undefined" && confirmFunction !== null) {
       store.modal.confirmFunction = confirmFunction;
     }
+    store.modal.cancelLabel = cancelLabel;
+    store.modal.buttonLabel = buttonLabel;
   },
   // Hide modal
   hideModal() {
@@ -910,7 +919,22 @@ const store = reactive({
   },
   // Delete selected chime event
   deleteEvent() {
-    alert("delete event");
+    store.showModal({
+      title: "Delete \""+store.selection.event.label+"\"",
+      contentKey: 'deleteEvent',
+      buttonLabel: 'Delete',
+      confirmFunction: () => {
+        const pathEnd = store.selection.path[store.selection.path.length-1];
+        const index = pathEnd.index;
+        if (store.selection.path.length > 1) {
+          const parent = store.selection.path[store.selection.path.length-2].event;
+          parent.members.splice(index, 1);
+        } else {
+          store.conf.events.splice(index, 1);
+        }
+        store.deselect();
+      }
+    });
   },
   // Move chime event upward in hierarchy
   decreaseIndent() {
@@ -1001,6 +1025,21 @@ const app = createApp({
         confirmFunction: null,
         contentKey: 'overlapSlotsHelp'
       });
+    },
+    // Return number of chime events inside group
+    getEventCount(group) {
+      if (group.type != 'group' || typeof group.members === "undefined") {
+        return 0;
+      }
+      let count = 0;
+      for (let i=0; i < group.members.length; i++) {
+        if (group.members[i].type == 'group') {
+          count += this.getEventCount(group.members[i]);
+        } else {
+          count++;
+        }
+      }
+      return count;
     },
     // Return list of all chime events matching the given sequence slot, recursively searching groups
     getCollisionList(n,events,enable,path) {
