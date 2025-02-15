@@ -79,6 +79,14 @@
 				background-color: #2c2c2c;
 				padding: 8px;
 			}
+			.inset-flat>* {
+				border-left: 2px solid #393836;
+				padding-left: 8px;
+			}
+			.inset-flat>*:first-child {
+				border-left: none;
+				padding-left: 0;
+			}
 			.inset-flat h5 {
 				font-size: 16px;
 			}
@@ -673,7 +681,7 @@
 									<h4>Match Rules</h4>
 									<div class="inset-flat-container" style="display:flex;flex-direction:column;flex-grow:1;align-items:center">
 										<h5 class="inset-flat-heading" style="margin:0;">Date</h5>
-										<div class="inset-flat" style="display:flex;flex-direction:row;gap:16px;flex-wrap:wrap;align-items:flex-start;">
+										<div class="inset-flat" style="display:flex;flex-direction:row;gap:16px 8px;flex-wrap:wrap;align-items:flex-start;">
 											<div style="display:flex;flex-direction:row;gap:8px;">
 												<label for="match_date_type">Type</label>
 												<select id="match_date_type" v-model="store.selection.event.match.date.type">
