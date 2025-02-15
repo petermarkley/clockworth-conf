@@ -5,7 +5,6 @@
 		<style>
 			body {
 				background-color: #232221;
-				/*background-color: #393836;*/
 				background-image: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.4)), linear-gradient(to bottom, rgba(57,56,54,0), rgba(57,56,54,1)), url("img/clockworth-paper-bg.jpg");
 				background-position: top center;
 				background-repeat: no-repeat;
@@ -74,6 +73,27 @@
 				overflow-y: scroll;
 				margin: 0 0 8px 0;
 			}
+			.inset-flat {
+				width: 100%;
+				box-sizing: border-box;
+				background-color: #2c2c2c;
+				padding: 8px;
+			}
+			.inset-flat h5 {
+				font-size: 16px;
+			}
+			.inset-flat-heading {
+				width: 100%;
+				box-sizing: border-box;
+				background-color: #393836;
+				text-align: center;
+				padding: 4px 8px;
+				font-size: 16px;
+			}
+			.inset-flat-container {
+				border-radius: 6px;
+				overflow: hidden;
+			}
 			#chime_events, #chime_events ul {
 				list-style-type: none;
 				padding: 0;
@@ -86,7 +106,6 @@
 			#chime_events ul {
 				padding: 0 0 0 26px;
 				margin: 0;
-				/*border-left: 2px solid #4d4d4c;*/
 			}
 			#chime_events li {
 				margin: 0;
@@ -280,7 +299,6 @@
 				display: flex;
 				flex-direction: row;
 				justify-content: space-between;
-				border-bottom: 1px solid #4d4d4c;
 				padding-bottom: 16px;
 				flex-grow: 1;
 			}
@@ -363,6 +381,8 @@
 				-ms-transform: translateX(26px);
 				transform: translateX(26px);
 			}
+			
+			/* page 3 styles */
 			#json_output {
 				color: inherit;
 				font-weight: bold;
@@ -379,6 +399,8 @@
 				border-radius: 4px;
 				overflow-y: scroll;
 			}
+			
+			/* modal styles */
 			#modal {
 				position: absolute;
 				overflow: hidden;
@@ -431,6 +453,8 @@
 				left: 16px;
 				background-color: #323232;
 			}
+			
+			/* form element styles */
 			input[type="text"] {
 				appearance: none;
 				border: none;
@@ -441,6 +465,9 @@
 				box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
 				padding: 8px;
 				border-radius: 4px;
+			}
+			label {
+				font-size: 14px;
 			}
 			[v-cloak] { display: none }
 		</style>
@@ -642,11 +669,11 @@
 								<p style="font-style:italic;">Contains {{ getEventCount(store.selection.event) }} chime events.</p>
 							</template>
 							<template v-else-if="store.selection.event && store.selection.event.type == 'event'">
-								<div class="fieldset" style="">
+								<div class="fieldset" style="flex-direction:column;align-items:stretch;">
 									<h4>Match Rules</h4>
-									<div style="display:flex;flex-direction:column;gap:8px;flex-grow:1;align-items:center">
-										<h5 style="margin:0;">Date</h5>
-										<div>
+									<div class="inset-flat-container" style="display:flex;flex-direction:column;flex-grow:1;align-items:center">
+										<h5 class="inset-flat-heading" style="margin:0;">Date</h5>
+										<div class="inset-flat" style="display:flex;flex-direction:row;gap:16px;flex-wrap:wrap;align-items:flex-start;">
 											<div style="display:flex;flex-direction:row;gap:8px;">
 												<label for="match_date_type">Type</label>
 												<select id="match_date_type" v-model="store.selection.event.match.date.type">
@@ -727,9 +754,9 @@
 											</template>
 										</div>
 									</div>
-									<div style="display:flex;flex-direction:column;gap:8px;flex-grow:1;align-items:center">
-										<h5 style="margin:0;">Time</h5>
-										<div>
+									<div class="inset-flat-container" style="display:flex;flex-direction:column;flex-grow:1;align-items:center">
+										<h5 class="inset-flat-heading" style="margin:0;">Time</h5>
+										<div class="inset-flat" style="display:flex;flex-direction:row;gap:16px;flex-wrap:wrap;align-items:flex-start;">
 											<div style="display:flex;flex-direction:row;gap:8px;">
 												<label for="match_time_type">Type</label>
 												<select id="match_time_type" v-model="store.selection.event.match.time.type">
