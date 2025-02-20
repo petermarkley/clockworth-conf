@@ -787,7 +787,7 @@
 										</div>
 									</div>
 								</div>
-								<div id="world_map">
+								<div id="world_map" @click="store.clickWorldMap">
 									<svg id="world_map_pin" viewBox="0 0 24 24" :style="'bottom:'+(store.latitudeSigned+90)*(400/180)+'px;left:'+(store.longitudeSigned+180)*(800/360)+'px;'">
 										<use href="img/icons.svg#crosshairs"/>
 									</svg>
@@ -1503,6 +1503,14 @@ const store = reactive({
         }
       break;
     }
+  },
+  // Handle click event for world map
+  clickWorldMap(event) {
+    const rect = event.target.getBoundingClientRect();
+    const lat = 90.0 - (event.clientY - rect.y)*(180/rect.height);
+    const lon = (event.clientX - rect.x)*(360/rect.width) - 180.0;
+    store.latitudeSigned = lat;
+    store.longitudeSigned = lon;
   },
   // Utility methods for computed getters and setters
   getCoordinates() {
