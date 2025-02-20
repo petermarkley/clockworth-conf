@@ -520,7 +520,7 @@
 		</style>
 	</head>
 	<body>
-		<div id="app" :style="(store.modal.show?'position:fixed;width:100vw;top:'+(-store.modal.scroll)+'px':'')">
+		<div id="app">
 			<main>
 				<div style="display:flex;flex-direction:column;align-items:center;margin-bottom:16px;">
 					<h1>Clockworth Configurator</h1>
@@ -1142,12 +1142,18 @@ const store = reactive({
     }
     store.modal.cancelLabel = cancelLabel;
     store.modal.buttonLabel = buttonLabel;
+    document.body.style.position = "fixed";
+    document.body.style.width = "100vw";
+    document.body.style.top = "-"+store.modal.scroll+"px";
   },
   // Hide modal
   hideModal() {
     store.modal.show = false;
     store.modal.title = "";
     store.modal.confirmFunction = null;
+    document.body.style.position = "";
+    document.body.style.width = "";
+    window.scrollTo(0,store.modal.scroll);
   },
   // Add new chime event
   newEvent() {
