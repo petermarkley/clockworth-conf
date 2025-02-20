@@ -743,6 +743,9 @@
 								<span class="slider" :title="(store.selection.event.enable?'Click to disable':'Click to enable')"></span>
 							</label>
 						</div>
+						<div v-else class="properties_heading">
+							<h3>Top-Level Settings</h3>
+						</div>
 						<div id="properties">
 							<template v-if="store.selection.event === null">
 								<div style="display:flex;flex-direction:row;gap:32px;justify-content:center;align-items:center;">
