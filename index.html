@@ -724,7 +724,7 @@
 											<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
 												<label for="match_date_type">Type</label>
 												<div class="select-container">
-													<select id="match_date_type" v-model="store.selection.event.match.date.type">
+													<select id="match_date_type" v-model="store.selection.event.match.date.type" @change="store.updateConf(store.selection.event);">
 														<option value="all">all</option>
 														<option value="specify">specify</option>
 														<option value="easter">Easter</option>
@@ -737,7 +737,7 @@
 													<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
 														<label for="match_date_specify_month_type">Type</label>
 														<div class="select-container">
-															<select id="match_date_specify_month_type" v-model="store.selection.event.match.date.month.type">
+															<select id="match_date_specify_month_type" v-model="store.selection.event.match.date.month.type" @change="store.updateConf(store.selection.event);">
 																<option value="specify">specify</option>
 															</select>
 														</div>
@@ -767,7 +767,7 @@
 													<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
 														<label for="match_date_specify_day_type">Type</label>
 														<div class="select-container">
-															<select id="match_date_specify_day_type" v-model="store.selection.event.match.date.day.type">
+															<select id="match_date_specify_day_type" v-model="store.selection.event.match.date.day.type" @change="store.updateConf(store.selection.event);">
 																<option value="fixed">fixed</option>
 																<option value="floating">floating</option>
 															</select>
@@ -819,7 +819,7 @@
 											<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
 												<label for="match_time_type">Type</label>
 												<div class="select-container">
-													<select id="match_time_type" v-model="store.selection.event.match.time.type">
+													<select id="match_time_type" v-model="store.selection.event.match.time.type" @change="store.updateConf(store.selection.event);">
 														<option value="specify">specify</option>
 														<option value="sun">solar</option>
 													</select>
@@ -831,7 +831,7 @@
 													<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
 														<label for="match_time_specify_hour_type">Type</label>
 														<div class="select-container">
-															<select id="match_time_specify_hour_type" v-model="store.selection.event.match.time.hour.type">
+															<select id="match_time_specify_hour_type" v-model="store.selection.event.match.time.hour.type" @change="store.updateConf(store.selection.event);">
 																<option value="all">all</option>
 																<option value="specify">specify</option>
 															</select>
@@ -841,7 +841,7 @@
 														<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
 															<label for="match_time_specify_hour_format">Format</label>
 															<div class="select-container">
-																<select id="match_time_specify_hour_format" v-model="store.selection.event.match.time.hour.format">
+																<select id="match_time_specify_hour_format" v-model="store.selection.event.match.time.hour.format" @change="store.updateConf(store.selection.event);">
 																	<option value="meridian">12-hr</option>
 																	<option value="military">24-hr (military)</option>
 																</select>
@@ -866,7 +866,7 @@
 													<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
 														<label for="match_time_specify_minute_type">Type</label>
 														<div class="select-container">
-															<select id="match_time_specify_minute_type" v-model="store.selection.event.match.time.minute.type">
+															<select id="match_time_specify_minute_type" v-model="store.selection.event.match.time.minute.type" @change="store.updateConf(store.selection.event);">
 																<option value="specify">specify</option>
 															</select>
 														</div>
@@ -1290,6 +1290,131 @@ const store = reactive({
       store.conf.events[index] = swap;
     }
     pathEnd.index++;
+  },
+  // Create or remove parts of the config data structure as appropriate in response to changes
+  // (This is not a pretty implementation. More time could be spent to design something more elegant...)
+  updateConf(event) {
+    switch (event.match.date.type) {
+      case 'all':
+        if (typeof event.match.date.month !== "undefined") {
+          delete event.match.date.month;
+        }
+        if (typeof event.match.date.day !== "undefined") {
+          delete event.match.date.day;
+        }
+        if (typeof event.match.date.variant !== "undefined") {
+          delete event.match.date.variant;
+        }
+      break;
+      case 'specify':
+        if (typeof event.match.date.month !== "object") {
+          event.match.date.month = {
+            type: 'specify',
+            value: 'Jan'
+          };
+        }
+        if (typeof event.match.date.day !== "object") {
+          event.match.date.day = {
+            type: 'fixed',
+            value: 1
+          };
+        }
+        if (typeof event.match.date.variant !== "undefined") {
+          delete event.match.date.variant;
+        }
+        switch (event.match.date.day.type) {
+          case 'fixed':
+            if (typeof event.match.date.day.value !== "number") {
+              event.match.date.day.value = 1;
+            }
+            if (typeof event.match.date.day.ordinal !== "undefined") {
+              delete event.match.date.day.ordinal;
+            }
+          break;
+          case 'floating':
+            if (typeof event.match.date.day.value !== "string") {
+              event.match.date.day.value = "Sun";
+            }
+            if (typeof event.match.date.day.ordinal !== "number") {
+              event.match.date.day.ordinal = 1;
+            }
+          break;
+        }
+      break;
+      case 'easter':
+        if (typeof event.match.date.month !== "undefined") {
+          delete event.match.date.month;
+        }
+        if (typeof event.match.date.day !== "undefined") {
+          delete event.match.date.day;
+        }
+        if (typeof event.match.date.variant !== "string") {
+          event.match.date.variant = 'western';
+        }
+      break;
+    }
+    switch (event.match.time.type) {
+      case 'specify':
+        if (typeof event.match.time.hour !== "object") {
+          event.match.time.hour = {
+            type: 'all',
+          };
+        }
+        if (typeof event.match.time.minute !== "object") {
+          event.match.time.minute = {
+            type: 'specify',
+            value: 0
+          };
+        }
+        if (typeof event.match.time.event !== "undefined") {
+          delete event.match.time.event;
+        }
+        if (typeof event.match.time.offset !== "undefined") {
+          delete event.match.time.offset;
+        }
+        switch (event.match.time.hour.type) {
+          case 'all':
+            if (typeof event.match.time.hour.format !== "undefined") {
+              delete event.match.time.hour.format;
+            }
+            if (typeof event.match.time.hour.value !== "undefined") {
+              delete event.match.time.hour.value;
+            }
+          break;
+          case 'specify':
+            if (typeof event.match.time.hour.format !== "string") {
+              event.match.time.hour.format = 'meridian';
+            }
+            if (typeof event.match.time.hour.value !== "number") {
+              event.match.time.hour.value = 12;
+            }
+            switch (event.match.time.hour.format) {
+              case 'meridian':
+                if (event.match.time.hour.value < 1) {
+                  event.match.time.hour.value += 12;
+                } else if (event.match.time.hour.value > 12) {
+                  event.match.time.hour.value -= 12;
+                }
+              break;
+            }
+          break;
+        }
+      break;
+      case 'sun':
+        if (typeof event.match.time.hour !== "undefined") {
+          delete event.match.time.hour;
+        }
+        if (typeof event.match.time.minute !== "undefined") {
+          delete event.match.time.minute;
+        }
+        if (typeof event.match.time.event !== "string") {
+          event.match.time.event = 'rise';
+        }
+        if (typeof event.match.time.offset !== "number") {
+          event.match.time.offset = 0;
+        }
+      break;
+    }
   },
 });
 
