@@ -742,10 +742,10 @@
 									<div style="display:flex;flex-direction:row;gap:8px;justify-content:center;align-items:flex-end;">
 										<div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start;">
 											<label for="latitude">Latitude</label>
-											<input type="number" min="-90" max="90" step="any" id="latitude" class="nospinner"/>
+											<input type="number" min="0" max="90" step="any" id="latitude" class="nospinner" v-model="store.latitude"/>
 										</div>
 										<div class="select-container" style="padding-bottom:1px;">
-											<select id="latitude_direction" style="font-size:16px;">
+											<select id="latitude_direction" style="font-size:16px;" v-model="store.latitudeDirection">
 												<option value="N">N</option>
 												<option value="S">S</option>
 											</select>
@@ -754,10 +754,10 @@
 									<div style="display:flex;flex-direction:row;gap:8px;justify-content:center;align-items:flex-end;">
 										<div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start;">
 											<label for="longitude">Longitude</label>
-											<input type="number" min="-180" max="180" step="any" id="longitude" class="nospinner"/>
+											<input type="number" min="0" max="180" step="any" id="longitude" class="nospinner" v-model="store.longitude"/>
 										</div>
 										<div class="select-container" style="padding-bottom:1px;">
-											<select id="longitude_direction" style="font-size:16px;">
+											<select id="longitude_direction" style="font-size:16px;" v-model="store.longitudeDirection">
 												<option value="E">E</option>
 												<option value="W">W</option>
 											</select>
@@ -1107,12 +1107,12 @@
 			</div>
 		</div>
 		<script type="module">
-import { createApp, ref, reactive } from 'https://unpkg.com/vue@3.5.13/dist/vue.esm-browser.js'
+import { createApp, ref, reactive, computed } from 'https://unpkg.com/vue@3.5.13/dist/vue.esm-browser.js'
 
 const store = reactive({
   // This is the payload that this widget exists to build, the Clockworth config data
   conf: {
-    location: "",
+    location: "0N 0E",
     tick: true,
     chime: true,
     events: []
@@ -1121,6 +1121,13 @@ const store = reactive({
   selection: {
     path: [],
     event: null
+  },
+  // Intermediate form of `store.conf.location` used by getters and setters
+  coords: {
+    lat: 0,
+    lon: 0,
+    latDir: "N",
+    lonDir: "E",
   },
   // Modal state
   modal: {
@@ -1469,6 +1476,57 @@ const store = reactive({
       break;
     }
   },
+  // Utility methods for computed getters and setters
+  getCoordinates() {
+    const arr = store.conf.location.split(" ");
+    store.coords.lat = arr[0].slice(0,arr[0].length-1);
+    store.coords.lon = arr[1].slice(0,arr[1].length-1);
+    store.coords.latDir = arr[0].slice(-1);
+    store.coords.lonDir = arr[1].slice(-1);
+  },
+  setCoordinates() {
+    store.conf.location = store.coords.lat + store.coords.latDir + " " + store.coords.lon + store.coords.lonDir;
+  },
+  latitude: computed({
+    get: () => {
+      store.getCoordinates();
+      return store.coords.lat;
+    },
+    set: (newLat) => {
+      store.coords.lat = newLat;
+      store.setCoordinates();
+    },
+  }),
+  latitudeDirection: computed({
+    get: () => {
+      store.getCoordinates();
+      return store.coords.latDir;
+    },
+    set: (newLatDir) => {
+      store.coords.latDir = newLatDir;
+      store.setCoordinates();
+    },
+  }),
+  longitude: computed({
+    get: () => {
+      store.getCoordinates();
+      return store.coords.lon;
+    },
+    set: (newLon) => {
+      store.coords.lon = newLon;
+      store.setCoordinates();
+    },
+  }),
+  longitudeDirection: computed({
+    get: () => {
+      store.getCoordinates();
+      return store.coords.lonDir;
+    },
+    set: (newLonDir) => {
+      store.coords.lonDir = newLonDir;
+      store.setCoordinates();
+    },
+  }),
 });
 
 // Root component
@@ -1478,7 +1536,7 @@ const app = createApp({
       // The widget has three pages, or steps, that the user progresses through
       page: 0,
       // Just a value used for fancy GUI feedback
-      clipboardFeedback: false
+      clipboardFeedback: false,
     };
   },
   setup() {
@@ -1607,7 +1665,7 @@ const app = createApp({
       document.body.appendChild(anchor);
       anchor.click();
       document.body.removeChild(anchor);
-    }
+    },
   }
 });
 
