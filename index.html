@@ -466,10 +466,10 @@
 			}
 			
 			/* form element styles */
-			input[type="text"] {
+			input[type="text"], input[type="number"] {
 				appearance: none;
 				border: none;
-				font-size: 19px;
+				font-size: inherit;
 				color: #b6b6b6;
 				font-family: inherit;
 				background-color: #2c2c2c;
@@ -480,6 +480,41 @@
 			}
 			label {
 				font-size: 14px;
+			}
+			.select-container {
+				position: relative;
+			}
+			.select-container::after {
+				content: '\25BC';
+				position: absolute;
+				right: 0.5rem;
+				top: 0.5rem;
+				pointer-events: none;
+				font-size: 12px;
+			}
+			select {
+				appearance: none;
+				background-color: #393836;
+				color: #fff;
+				border: none;
+				margin: 0;
+				padding: 8px;
+				padding-right: 2.5em;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				border-radius: 4px;
+				box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+				cursor: pointer;
+				font-family: inherit;
+				font-weight: normal;
+				width: 100%;
+			}
+			select:hover, select:focus {
+				background-color: #4d4d4c;
+			}
+			select:active {
+				background-color: #393836;
 			}
 			[v-cloak] { display: none }
 		</style>
@@ -686,70 +721,80 @@
 									<div class="inset-flat-container" style="display:flex;flex-direction:column;flex-grow:1;align-items:center">
 										<h5 class="inset-flat-heading" style="margin:0;">Date</h5>
 										<div class="inset-flat" style="display:flex;flex-direction:row;gap:16px 8px;flex-wrap:wrap;align-items:flex-start;">
-											<div style="display:flex;flex-direction:row;gap:8px;">
+											<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
 												<label for="match_date_type">Type</label>
-												<select id="match_date_type" v-model="store.selection.event.match.date.type">
-													<option value="all">all</option>
-													<option value="specify">specify</option>
-													<option value="easter">Easter</option>
-												</select>
+												<div class="select-container">
+													<select id="match_date_type" v-model="store.selection.event.match.date.type">
+														<option value="all">all</option>
+														<option value="specify">specify</option>
+														<option value="easter">Easter</option>
+													</select>
+												</div>
 											</div>
 											<template v-if="store.selection.event.match.date.type == 'specify'">
-												<div>
+												<div style="display:flex;flex-direction:column;gap:8px;">
 													<h5 style="margin:0;">Month</h5>
-													<div style="display:flex;flex-direction:row;gap:8px;">
+													<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
 														<label for="match_date_specify_month_type">Type</label>
-														<select id="match_date_specify_month_type" v-model="store.selection.event.match.date.month.type">
-															<option value="specify">specify</option>
-														</select>
+														<div class="select-container">
+															<select id="match_date_specify_month_type" v-model="store.selection.event.match.date.month.type">
+																<option value="specify">specify</option>
+															</select>
+														</div>
 													</div>
-													<div style="display:flex;flex-direction:row;gap:8px;">
+													<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
 														<label for="match_date_specify_month_value">Value</label>
-														<select id="match_date_specify_month_value" v-model="store.selection.event.match.date.month.value">
-															<option value="Jan">January</option>
-															<option value="Feb">February</option>
-															<option value="Mar">March</option>
-															<option value="Apr">April</option>
-															<option value="May">May</option>
-															<option value="Jun">June</option>
-															<option value="Jul">July</option>
-															<option value="Aug">August</option>
-															<option value="Sep">September</option>
-															<option value="Oct">October</option>
-															<option value="Nov">November</option>
-															<option value="Dec">December</option>
-														</select>
+														<div class="select-container">
+															<select id="match_date_specify_month_value" v-model="store.selection.event.match.date.month.value">
+																<option value="Jan">January</option>
+																<option value="Feb">February</option>
+																<option value="Mar">March</option>
+																<option value="Apr">April</option>
+																<option value="May">May</option>
+																<option value="Jun">June</option>
+																<option value="Jul">July</option>
+																<option value="Aug">August</option>
+																<option value="Sep">September</option>
+																<option value="Oct">October</option>
+																<option value="Nov">November</option>
+																<option value="Dec">December</option>
+															</select>
+														</div>
 													</div>
 												</div>
-												<div>
+												<div style="display:flex;flex-direction:column;gap:8px;">
 													<h5 style="margin:0;">Day</h5>
-													<div style="display:flex;flex-direction:row;gap:8px;">
+													<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
 														<label for="match_date_specify_day_type">Type</label>
-														<select id="match_date_specify_day_type" v-model="store.selection.event.match.date.day.type">
-															<option value="fixed">fixed</option>
-															<option value="floating">floating</option>
-														</select>
+														<div class="select-container">
+															<select id="match_date_specify_day_type" v-model="store.selection.event.match.date.day.type">
+																<option value="fixed">fixed</option>
+																<option value="floating">floating</option>
+															</select>
+														</div>
 													</div>
 													<template v-if="store.selection.event.match.date.day.type == 'fixed'">
-														<div style="display:flex;flex-direction:row;gap:8px;">
+														<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
 															<label for="match_date_specify_day_value">Value</label>
 															<input type="number" min="1" max="31" step="1" id="match_date_specify_day_value" v-model="store.selection.event.match.date.day.value"/>
 														</div>
 													</template>
 													<template v-else-if="store.selection.event.match.date.day.type == 'floating'">
-														<div style="display:flex;flex-direction:row;gap:8px;">
+														<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
 															<label for="match_date_specify_day_value">Value</label>
-															<select id="match_date_specify_day_value" v-model="store.selection.event.match.date.day.value">
-																<option value="Sun">Sun</option>
-																<option value="Mon">Mon</option>
-																<option value="Tue">Tue</option>
-																<option value="Wed">Wed</option>
-																<option value="Thu">Thu</option>
-																<option value="Fri">Fri</option>
-																<option value="Sat">Sat</option>
-															</select>
+															<div class="select-container">
+																<select id="match_date_specify_day_value" v-model="store.selection.event.match.date.day.value">
+																	<option value="Sun">Sun</option>
+																	<option value="Mon">Mon</option>
+																	<option value="Tue">Tue</option>
+																	<option value="Wed">Wed</option>
+																	<option value="Thu">Thu</option>
+																	<option value="Fri">Fri</option>
+																	<option value="Sat">Sat</option>
+																</select>
+															</div>
 														</div>
-														<div style="display:flex;flex-direction:row;gap:8px;">
+														<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
 															<label for="match_date_specify_day_ordinal">Ordinal</label>
 															<input type="number" min="1" max="5" step="1" id="match_date_specify_day_ordinal" v-model="store.selection.event.match.date.day.ordinal"/>
 														</div>
@@ -757,11 +802,13 @@
 												</div>
 											</template>
 											<template v-else-if="store.selection.event.match.date.type == 'easter'">
-												<div style="display:flex;flex-direction:row;gap:8px;">
+												<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
 													<label for="match_date_easter_variant">Variant</label>
-													<select id="match_date_easter_variant" v-model="store.selection.event.match.date.variant">
-														<option value="western">Western</option>
-													</select>
+													<div class="select-container">
+														<select id="match_date_easter_variant" v-model="store.selection.event.match.date.variant">
+															<option value="western">Western</option>
+														</select>
+													</div>
 												</div>
 											</template>
 										</div>
@@ -769,68 +816,78 @@
 									<div class="inset-flat-container" style="display:flex;flex-direction:column;flex-grow:1;align-items:center">
 										<h5 class="inset-flat-heading" style="margin:0;">Time</h5>
 										<div class="inset-flat" style="display:flex;flex-direction:row;gap:16px;flex-wrap:wrap;align-items:flex-start;">
-											<div style="display:flex;flex-direction:row;gap:8px;">
+											<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
 												<label for="match_time_type">Type</label>
-												<select id="match_time_type" v-model="store.selection.event.match.time.type">
-													<option value="specify">specify</option>
-													<option value="sun">solar</option>
-												</select>
+												<div class="select-container">
+													<select id="match_time_type" v-model="store.selection.event.match.time.type">
+														<option value="specify">specify</option>
+														<option value="sun">solar</option>
+													</select>
+												</div>
 											</div>
 											<template v-if="store.selection.event.match.time.type == 'specify'">
-												<div>
+												<div style="display:flex;flex-direction:column;gap:8px;">
 													<h5 style="margin:0;">Hour</h5>
-													<div style="display:flex;flex-direction:row;gap:8px;">
+													<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
 														<label for="match_time_specify_hour_type">Type</label>
-														<select id="match_time_specify_hour_type" v-model="store.selection.event.match.time.hour.type">
-															<option value="all">all</option>
-															<option value="specify">specify</option>
-														</select>
-													</div>
-													<template v-if="store.selection.event.match.time.hour.type == 'specify'">
-														<div style="display:flex;flex-direction:row;gap:8px;">
-															<label for="match_time_specify_hour_format">Format</label>
-															<select id="match_time_specify_hour_format" v-model="store.selection.event.match.time.hour.format">
-																<option value="meridian">12-hr</option>
-																<option value="military">24-hr (military)</option>
+														<div class="select-container">
+															<select id="match_time_specify_hour_type" v-model="store.selection.event.match.time.hour.type">
+																<option value="all">all</option>
+																<option value="specify">specify</option>
 															</select>
 														</div>
+													</div>
+													<template v-if="store.selection.event.match.time.hour.type == 'specify'">
+														<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
+															<label for="match_time_specify_hour_format">Format</label>
+															<div class="select-container">
+																<select id="match_time_specify_hour_format" v-model="store.selection.event.match.time.hour.format">
+																	<option value="meridian">12-hr</option>
+																	<option value="military">24-hr (military)</option>
+																</select>
+															</div>
+														</div>
 														<template v-if="store.selection.event.match.time.hour.format == 'meridian'">
-															<div style="display:flex;flex-direction:row;gap:8px;">
+															<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
 																<label for="match_time_specify_hour_value">Value</label>
 																<input type="number" min="1" max="12" step="1" id="match_time_specify_hour_value" v-model="store.selection.event.match.time.hour.value"/>
 															</div>
 														</template>
 														<template v-else-if="store.selection.event.match.time.hour.format == 'military'">
-															<div style="display:flex;flex-direction:row;gap:8px;">
+															<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
 																<label for="match_time_specify_hour_value">Value</label>
 																<input type="number" min="0" max="23" step="1" id="match_time_specify_hour_value" v-model="store.selection.event.match.time.hour.value"/>
 															</div>
 														</template>
 													</template>
 												</div>
-												<div>
+												<div style="display:flex;flex-direction:column;gap:8px;">
 													<h5 style="margin:0;">Minute</h5>
-													<div style="display:flex;flex-direction:row;gap:8px;">
+													<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
 														<label for="match_time_specify_minute_type">Type</label>
-														<select id="match_time_specify_minute_type" v-model="store.selection.event.match.time.minute.type">
-															<option value="specify">specify</option>
-														</select>
+														<div class="select-container">
+															<select id="match_time_specify_minute_type" v-model="store.selection.event.match.time.minute.type">
+																<option value="specify">specify</option>
+															</select>
+														</div>
 													</div>
-													<div style="display:flex;flex-direction:row;gap:8px;">
+													<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
 														<label for="match_time_specify_minute_value">Value</label>
 														<input type="number" min="0" max="59" step="1" id="match_time_specify_minute_value" v-model="store.selection.event.match.time.minute.value"/>
 													</div>
 												</div>
 											</template>
 											<template v-else-if="store.selection.event.match.time.type == 'sun'">
-												<div style="display:flex;flex-direction:row;gap:8px;">
+												<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
 													<label for="match_time_sun_event">Event</label>
-													<select id="match_time_sun_event" v-model="store.selection.event.match.time.event">
-														<option value="rise">rise</option>
-														<option value="set">set</option>
-													</select>
+													<div class="select-container">
+														<select id="match_time_sun_event" v-model="store.selection.event.match.time.event">
+															<option value="rise">rise</option>
+															<option value="set">set</option>
+														</select>
+													</div>
 												</div>
-												<div style="display:flex;flex-direction:row;gap:8px;">
+												<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
 													<label for="match_time_sun_offset">Offset</label>
 													<input type="number" step="1" id="match_time_sun_offset" v-model="store.selection.event.match.time.offset"/>
 												</div>
@@ -843,11 +900,13 @@
 									<div style="display:flex;flex-direction:column;gap:16px;width:100%;">
 										<div style="display:flex;flex-direction:column;gap:4px;align-items:flex-start;">
 											<label for="file_relative">Relative to</label>
-											<select id="file_relative" v-model="store.selection.event.file.relative_to" style="width:100%;">
-												<option value="clockworth">Clockworth folder</option>
-												<option value="home">User home</option>
-												<option value="root">Filesystem root</option>
-											</select>
+											<div class="select-container">
+												<select id="file_relative" v-model="store.selection.event.file.relative_to">
+													<option value="clockworth">Clockworth folder</option>
+													<option value="home">User home</option>
+													<option value="root">Filesystem root</option>
+												</select>
+											</div>
 										</div>
 										<div style="display:flex;flex-direction:column;gap:4px;align-items:flex-start;">
 											<label for="file_path">Path</label>
@@ -940,20 +999,22 @@
 								</fieldset>
 								<div style="display:flex;flex-direction:column;gap:8px;padding:8px;">
 									<label for="newevent_parent">Parent</label>
-									<select
-										id="newevent_parent"
-										name="newevent_parent"
-										:value="(store.selection.event == null ? -1 : (store.selection.event.type=='group' ? store.selection.path.length-1 : store.selection.path.length-2))"
-									>
-										<option value="-1" data-path="[]">(Root)</option>
-										<template v-for="(item, i) in store.selection.path">
-											<option
-												v-if="item.event.type=='group'"
-												:value="i"
-												:data-path="JSON.stringify(store.cleanPath().slice(0,i+1))"
-											>{{ item.event.label }}</option>
-										</template>
-									</select>
+									<div class="select-container">
+										<select
+											id="newevent_parent"
+											name="newevent_parent"
+											:value="(store.selection.event == null ? -1 : (store.selection.event.type=='group' ? store.selection.path.length-1 : store.selection.path.length-2))"
+										>
+											<option value="-1" data-path="[]">(Root)</option>
+											<template v-for="(item, i) in store.selection.path">
+												<option
+													v-if="item.event.type=='group'"
+													:value="i"
+													:data-path="JSON.stringify(store.cleanPath().slice(0,i+1))"
+												>{{ item.event.label }}</option>
+											</template>
+										</select>
+									</div>
 								</div>
 								<div style="display:flex;flex-direction:column;gap:8px;padding:8px;margin-bottom:16px;">
 									<label for="newevent_label">Label</label>
