@@ -354,6 +354,16 @@
 				margin: 0;
 				width: 800px;
 				height: 400px;
+				box-sizing: border-box;
+				position: relative;
+				cursor: pointer;
+			}
+			#world_map_pin {
+				pointer-events: none;
+				position: absolute;
+				width: 1em;
+				height: 1em;
+				transform: translate( -50%, 50% );
 			}
 			
 			/* input toggle */
@@ -778,6 +788,9 @@
 									</div>
 								</div>
 								<div id="world_map">
+									<svg id="world_map_pin" viewBox="0 0 24 24" :style="'bottom:'+(store.latitudeSigned+90)*(400/180)+'px;left:'+(store.longitudeSigned+180)*(800/360)+'px;'">
+										<use href="img/icons.svg#crosshairs"/>
+									</svg>
 								</div>
 							</template>
 							<template v-else-if="store.selection.event.type == 'group'">
