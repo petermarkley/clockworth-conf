@@ -712,10 +712,54 @@
 							</label>
 						</div>
 						<div id="properties">
-							<template v-if="store.selection.event && store.selection.event.type == 'group'">
+							<template v-if="store.selection.event === null">
+								<div style="display:flex;flex-direction:row;gap:32px;justify-content:center;align-items:center;">
+									<label style="display:flex;flex-direction:row;gap:16px;align-items:center;">
+										<p style="margin:0;font-size:24px;">Chime</p>
+										<div class="switch">
+											<input type="checkbox" id="chime_enable" v-model="store.conf.chime">
+											<span class="slider" :title="(store.conf.chime?'Click to disable':'Click to enable')"></span>
+										</div>
+									</label>
+									<label style="display:flex;flex-direction:row;gap:16px;align-items:center;">
+										<p style="margin:0;font-size:24px;">Tick</p>
+										<div class="switch">
+											<input type="checkbox" id="chime_enable" v-model="store.conf.tick">
+											<span class="slider" :title="(store.conf.tick?'Click to disable':'Click to enable')"></span>
+										</div>
+									</label>
+								</div>
+								<div style="display:flex;flex-direction:row;gap:32px;justify-content:center;align-items:center;">
+									<div style="display:flex;flex-direction:row;gap:8px;justify-content:center;align-items:flex-end;">
+										<div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start;">
+											<label for="latitude">Latitude</label>
+											<input type="number" min="-90" max="90" step="any" id="latitude"/>
+										</div>
+										<div class="select-container">
+											<select id="latitude_direction">
+												<option value="N">N</option>
+												<option value="S">S</option>
+											</select>
+										</div>
+									</div>
+									<div style="display:flex;flex-direction:row;gap:8px;justify-content:center;align-items:flex-end;">
+										<div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start;">
+											<label for="longitude">Longitude</label>
+											<input type="number" min="-180" max="180" step="any" id="longitude"/>
+										</div>
+										<div class="select-container">
+											<select id="longitude_direction">
+												<option value="E">E</option>
+												<option value="W">W</option>
+											</select>
+										</div>
+									</div>
+								</div>
+							</template>
+							<template v-else-if="store.selection.event.type == 'group'">
 								<p style="font-style:italic;">Contains {{ getEventCount(store.selection.event) }} chime events.</p>
 							</template>
-							<template v-else-if="store.selection.event && store.selection.event.type == 'event'">
+							<template v-else-if="store.selection.event.type == 'event'">
 								<div class="fieldset" style="flex-direction:column;align-items:stretch;">
 									<h4>Match Rules</h4>
 									<div class="inset-flat-container" style="display:flex;flex-direction:column;flex-grow:1;align-items:center">
