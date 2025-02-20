@@ -516,6 +516,15 @@
 			select:active {
 				background-color: #393836;
 			}
+			input.nospinner {
+				-moz-appearance: textfield;
+				margin: 0;
+			}
+			input.nospinner::-webkit-inner-spin-button,
+			input.nospinner::-webkit-outer-spin-button {
+				-webkit-appearance: none;
+				margin: 0;
+			}
 			[v-cloak] { display: none }
 		</style>
 	</head>
@@ -733,10 +742,10 @@
 									<div style="display:flex;flex-direction:row;gap:8px;justify-content:center;align-items:flex-end;">
 										<div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start;">
 											<label for="latitude">Latitude</label>
-											<input type="number" min="-90" max="90" step="any" id="latitude"/>
+											<input type="number" min="-90" max="90" step="any" id="latitude" class="nospinner"/>
 										</div>
-										<div class="select-container">
-											<select id="latitude_direction">
+										<div class="select-container" style="padding-bottom:1px;">
+											<select id="latitude_direction" style="font-size:16px;">
 												<option value="N">N</option>
 												<option value="S">S</option>
 											</select>
@@ -745,10 +754,10 @@
 									<div style="display:flex;flex-direction:row;gap:8px;justify-content:center;align-items:flex-end;">
 										<div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start;">
 											<label for="longitude">Longitude</label>
-											<input type="number" min="-180" max="180" step="any" id="longitude"/>
+											<input type="number" min="-180" max="180" step="any" id="longitude" class="nospinner"/>
 										</div>
-										<div class="select-container">
-											<select id="longitude_direction">
+										<div class="select-container" style="padding-bottom:1px;">
+											<select id="longitude_direction" style="font-size:16px;">
 												<option value="E">E</option>
 												<option value="W">W</option>
 											</select>
