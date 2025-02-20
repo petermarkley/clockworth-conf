@@ -772,6 +772,65 @@
 													<option value="sun">solar</option>
 												</select>
 											</div>
+											<template v-if="store.selection.event.match.time.type == 'specify'">
+												<div>
+													<h5 style="margin:0;">Hour</h5>
+													<div style="display:flex;flex-direction:row;gap:8px;">
+														<label for="match_time_specify_hour_type">Type</label>
+														<select id="match_time_specify_hour_type" v-model="store.selection.event.match.time.hour.type">
+															<option value="all">all</option>
+															<option value="specify">specify</option>
+														</select>
+													</div>
+													<template v-if="store.selection.event.match.time.hour.type == 'specify'">
+														<div style="display:flex;flex-direction:row;gap:8px;">
+															<label for="match_time_specify_hour_format">Format</label>
+															<select id="match_time_specify_hour_format" v-model="store.selection.event.match.time.hour.format">
+																<option value="meridian">12-hr</option>
+																<option value="military">24-hr (military)</option>
+															</select>
+														</div>
+														<template v-if="store.selection.event.match.time.hour.format == 'meridian'">
+															<div style="display:flex;flex-direction:row;gap:8px;">
+																<label for="match_time_specify_hour_value">Value</label>
+																<input type="number" min="1" max="12" step="1" id="match_time_specify_hour_value" v-model="store.selection.event.match.time.hour.value"/>
+															</div>
+														</template>
+														<template v-else-if="store.selection.event.match.time.hour.format == 'military'">
+															<div style="display:flex;flex-direction:row;gap:8px;">
+																<label for="match_time_specify_hour_value">Value</label>
+																<input type="number" min="0" max="23" step="1" id="match_time_specify_hour_value" v-model="store.selection.event.match.time.hour.value"/>
+															</div>
+														</template>
+													</template>
+												</div>
+												<div>
+													<h5 style="margin:0;">Minute</h5>
+													<div style="display:flex;flex-direction:row;gap:8px;">
+														<label for="match_time_specify_minute_type">Type</label>
+														<select id="match_time_specify_minute_type" v-model="store.selection.event.match.time.minute.type">
+															<option value="specify">specify</option>
+														</select>
+													</div>
+													<div style="display:flex;flex-direction:row;gap:8px;">
+														<label for="match_time_specify_minute_value">Value</label>
+														<input type="number" min="0" max="59" step="1" id="match_time_specify_minute_value" v-model="store.selection.event.match.time.minute.value"/>
+													</div>
+												</div>
+											</template>
+											<template v-else-if="store.selection.event.match.time.type == 'sun'">
+												<div style="display:flex;flex-direction:row;gap:8px;">
+													<label for="match_time_sun_event">Event</label>
+													<select id="match_time_sun_event" v-model="store.selection.event.match.time.event">
+														<option value="rise">rise</option>
+														<option value="set">set</option>
+													</select>
+												</div>
+												<div style="display:flex;flex-direction:row;gap:8px;">
+													<label for="match_time_sun_offset">Offset</label>
+													<input type="number" step="1" id="match_time_sun_offset" v-model="store.selection.event.match.time.offset"/>
+												</div>
+											</template>
 										</div>
 									</div>
 								</div>
