@@ -5,7 +5,6 @@
 		<style>
 			body {
 				background-color: #232221;
-				/*background-color: #393836;*/
 				background-image: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.4)), linear-gradient(to bottom, rgba(57,56,54,0), rgba(57,56,54,1)), url("img/clockworth-paper-bg.jpg");
 				background-position: top center;
 				background-repeat: no-repeat;
@@ -74,6 +73,35 @@
 				overflow-y: scroll;
 				margin: 0 0 8px 0;
 			}
+			.inset-flat {
+				width: 100%;
+				box-sizing: border-box;
+				background-color: #2c2c2c;
+				padding: 8px;
+			}
+			.inset-flat>* {
+				border-left: 2px solid #393836;
+				padding-left: 8px;
+			}
+			.inset-flat>*:first-child {
+				border-left: none;
+				padding-left: 0;
+			}
+			.inset-flat h5 {
+				font-size: 16px;
+			}
+			.inset-flat-heading {
+				width: 100%;
+				box-sizing: border-box;
+				background-color: #393836;
+				text-align: center;
+				padding: 4px 8px;
+				font-size: 16px;
+			}
+			.inset-flat-container {
+				border-radius: 6px;
+				overflow: hidden;
+			}
 			#chime_events, #chime_events ul {
 				list-style-type: none;
 				padding: 0;
@@ -86,7 +114,6 @@
 			#chime_events ul {
 				padding: 0 0 0 26px;
 				margin: 0;
-				/*border-left: 2px solid #4d4d4c;*/
 			}
 			#chime_events li {
 				margin: 0;
@@ -280,7 +307,6 @@
 				display: flex;
 				flex-direction: row;
 				justify-content: space-between;
-				border-bottom: 1px solid #4d4d4c;
 				padding-bottom: 16px;
 				flex-grow: 1;
 			}
@@ -312,6 +338,9 @@
 			}
 			#properties {
 				min-height: 300px;
+				display: flex;
+				flex-direction: column;
+				gap: 16px;
 			}
 			
 			/* input toggle */
@@ -363,6 +392,8 @@
 				-ms-transform: translateX(26px);
 				transform: translateX(26px);
 			}
+			
+			/* page 3 styles */
 			#json_output {
 				color: inherit;
 				font-weight: bold;
@@ -379,6 +410,8 @@
 				border-radius: 4px;
 				overflow-y: scroll;
 			}
+			
+			/* modal styles */
 			#modal {
 				position: absolute;
 				overflow: hidden;
@@ -410,7 +443,7 @@
 				flex-direction: column;
 				gap: 16px;
 			}
-			#modal-panel fieldset {
+			#modal-panel fieldset, .fieldset {
 				border-radius: 16px;
 				border: 2px solid #4d4d4c;
 				position: relative;
@@ -423,7 +456,7 @@
 				justify-content: center;
 				align-items: center;
 			}
-			#modal-panel fieldset h4 {
+			#modal-panel fieldset h4, .fieldset h4 {
 				margin: 0;
 				padding: 0 8px;
 				position: absolute;
@@ -431,22 +464,63 @@
 				left: 16px;
 				background-color: #323232;
 			}
-			input[type="text"] {
+			
+			/* form element styles */
+			input[type="text"], input[type="number"] {
 				appearance: none;
 				border: none;
-				font-size: 19px;
+				font-size: inherit;
 				color: #b6b6b6;
 				font-family: inherit;
 				background-color: #2c2c2c;
 				box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
 				padding: 8px;
 				border-radius: 4px;
+				box-sizing: border-box;
+			}
+			label {
+				font-size: 14px;
+			}
+			.select-container {
+				position: relative;
+			}
+			.select-container::after {
+				content: '\25BC';
+				position: absolute;
+				right: 0.5rem;
+				top: 0.5rem;
+				pointer-events: none;
+				font-size: 12px;
+			}
+			select {
+				appearance: none;
+				background-color: #393836;
+				color: #fff;
+				border: none;
+				margin: 0;
+				padding: 8px;
+				padding-right: 2.5em;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				border-radius: 4px;
+				box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+				cursor: pointer;
+				font-family: inherit;
+				font-weight: normal;
+				width: 100%;
+			}
+			select:hover, select:focus {
+				background-color: #4d4d4c;
+			}
+			select:active {
+				background-color: #393836;
 			}
 			[v-cloak] { display: none }
 		</style>
 	</head>
 	<body>
-		<div id="app" :style="(store.modal.show?'position:fixed;width:100vw;top:'+(-store.modal.scroll)+'px':'')">
+		<div id="app">
 			<main>
 				<div style="display:flex;flex-direction:column;align-items:center;margin-bottom:16px;">
 					<h1>Clockworth Configurator</h1>
@@ -638,7 +712,209 @@
 							</label>
 						</div>
 						<div id="properties">
-							
+							<template v-if="store.selection.event && store.selection.event.type == 'group'">
+								<p style="font-style:italic;">Contains {{ getEventCount(store.selection.event) }} chime events.</p>
+							</template>
+							<template v-else-if="store.selection.event && store.selection.event.type == 'event'">
+								<div class="fieldset" style="flex-direction:column;align-items:stretch;">
+									<h4>Match Rules</h4>
+									<div class="inset-flat-container" style="display:flex;flex-direction:column;flex-grow:1;align-items:center">
+										<h5 class="inset-flat-heading" style="margin:0;">Date</h5>
+										<div class="inset-flat" style="display:flex;flex-direction:row;gap:16px 8px;flex-wrap:wrap;align-items:flex-start;">
+											<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
+												<label for="match_date_type">Type</label>
+												<div class="select-container">
+													<select id="match_date_type" v-model="store.selection.event.match.date.type" @change="store.updateConf(store.selection.event);">
+														<option value="all">all</option>
+														<option value="specify">specify</option>
+														<option value="easter">Easter</option>
+													</select>
+												</div>
+											</div>
+											<template v-if="store.selection.event.match.date.type == 'specify'">
+												<div style="display:flex;flex-direction:column;gap:8px;">
+													<h5 style="margin:0;">Month</h5>
+													<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
+														<label for="match_date_specify_month_type">Type</label>
+														<div class="select-container">
+															<select id="match_date_specify_month_type" v-model="store.selection.event.match.date.month.type" @change="store.updateConf(store.selection.event);">
+																<option value="specify">specify</option>
+															</select>
+														</div>
+													</div>
+													<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
+														<label for="match_date_specify_month_value">Value</label>
+														<div class="select-container">
+															<select id="match_date_specify_month_value" v-model="store.selection.event.match.date.month.value">
+																<option value="Jan">January</option>
+																<option value="Feb">February</option>
+																<option value="Mar">March</option>
+																<option value="Apr">April</option>
+																<option value="May">May</option>
+																<option value="Jun">June</option>
+																<option value="Jul">July</option>
+																<option value="Aug">August</option>
+																<option value="Sep">September</option>
+																<option value="Oct">October</option>
+																<option value="Nov">November</option>
+																<option value="Dec">December</option>
+															</select>
+														</div>
+													</div>
+												</div>
+												<div style="display:flex;flex-direction:column;gap:8px;">
+													<h5 style="margin:0;">Day</h5>
+													<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
+														<label for="match_date_specify_day_type">Type</label>
+														<div class="select-container">
+															<select id="match_date_specify_day_type" v-model="store.selection.event.match.date.day.type" @change="store.updateConf(store.selection.event);">
+																<option value="fixed">fixed</option>
+																<option value="floating">floating</option>
+															</select>
+														</div>
+													</div>
+													<template v-if="store.selection.event.match.date.day.type == 'fixed'">
+														<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
+															<label for="match_date_specify_day_value">Value</label>
+															<input type="number" min="1" max="31" step="1" id="match_date_specify_day_value" v-model="store.selection.event.match.date.day.value"/>
+														</div>
+													</template>
+													<template v-else-if="store.selection.event.match.date.day.type == 'floating'">
+														<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
+															<label for="match_date_specify_day_value">Value</label>
+															<div class="select-container">
+																<select id="match_date_specify_day_value" v-model="store.selection.event.match.date.day.value">
+																	<option value="Sun">Sun</option>
+																	<option value="Mon">Mon</option>
+																	<option value="Tue">Tue</option>
+																	<option value="Wed">Wed</option>
+																	<option value="Thu">Thu</option>
+																	<option value="Fri">Fri</option>
+																	<option value="Sat">Sat</option>
+																</select>
+															</div>
+														</div>
+														<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
+															<label for="match_date_specify_day_ordinal">Ordinal</label>
+															<input type="number" min="1" max="5" step="1" id="match_date_specify_day_ordinal" v-model="store.selection.event.match.date.day.ordinal"/>
+														</div>
+													</template>
+												</div>
+											</template>
+											<template v-else-if="store.selection.event.match.date.type == 'easter'">
+												<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
+													<label for="match_date_easter_variant">Variant</label>
+													<div class="select-container">
+														<select id="match_date_easter_variant" v-model="store.selection.event.match.date.variant">
+															<option value="western">Western</option>
+														</select>
+													</div>
+												</div>
+											</template>
+										</div>
+									</div>
+									<div class="inset-flat-container" style="display:flex;flex-direction:column;flex-grow:1;align-items:center">
+										<h5 class="inset-flat-heading" style="margin:0;">Time</h5>
+										<div class="inset-flat" style="display:flex;flex-direction:row;gap:16px;flex-wrap:wrap;align-items:flex-start;">
+											<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
+												<label for="match_time_type">Type</label>
+												<div class="select-container">
+													<select id="match_time_type" v-model="store.selection.event.match.time.type" @change="store.updateConf(store.selection.event);">
+														<option value="specify">specify</option>
+														<option value="sun">solar</option>
+													</select>
+												</div>
+											</div>
+											<template v-if="store.selection.event.match.time.type == 'specify'">
+												<div style="display:flex;flex-direction:column;gap:8px;">
+													<h5 style="margin:0;">Hour</h5>
+													<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
+														<label for="match_time_specify_hour_type">Type</label>
+														<div class="select-container">
+															<select id="match_time_specify_hour_type" v-model="store.selection.event.match.time.hour.type" @change="store.updateConf(store.selection.event);">
+																<option value="all">all</option>
+																<option value="specify">specify</option>
+															</select>
+														</div>
+													</div>
+													<template v-if="store.selection.event.match.time.hour.type == 'specify'">
+														<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
+															<label for="match_time_specify_hour_format">Format</label>
+															<div class="select-container">
+																<select id="match_time_specify_hour_format" v-model="store.selection.event.match.time.hour.format" @change="store.updateConf(store.selection.event);">
+																	<option value="meridian">12-hr</option>
+																	<option value="military">24-hr (military)</option>
+																</select>
+															</div>
+														</div>
+														<template v-if="store.selection.event.match.time.hour.format == 'meridian'">
+															<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
+																<label for="match_time_specify_hour_value">Value</label>
+																<input type="number" min="1" max="12" step="1" id="match_time_specify_hour_value" v-model="store.selection.event.match.time.hour.value"/>
+															</div>
+														</template>
+														<template v-else-if="store.selection.event.match.time.hour.format == 'military'">
+															<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
+																<label for="match_time_specify_hour_value">Value</label>
+																<input type="number" min="0" max="23" step="1" id="match_time_specify_hour_value" v-model="store.selection.event.match.time.hour.value"/>
+															</div>
+														</template>
+													</template>
+												</div>
+												<div style="display:flex;flex-direction:column;gap:8px;">
+													<h5 style="margin:0;">Minute</h5>
+													<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
+														<label for="match_time_specify_minute_type">Type</label>
+														<div class="select-container">
+															<select id="match_time_specify_minute_type" v-model="store.selection.event.match.time.minute.type" @change="store.updateConf(store.selection.event);">
+																<option value="specify">specify</option>
+															</select>
+														</div>
+													</div>
+													<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
+														<label for="match_time_specify_minute_value">Value</label>
+														<input type="number" min="0" max="59" step="1" id="match_time_specify_minute_value" v-model="store.selection.event.match.time.minute.value"/>
+													</div>
+												</div>
+											</template>
+											<template v-else-if="store.selection.event.match.time.type == 'sun'">
+												<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
+													<label for="match_time_sun_event">Event</label>
+													<div class="select-container">
+														<select id="match_time_sun_event" v-model="store.selection.event.match.time.event">
+															<option value="rise">rise</option>
+															<option value="set">set</option>
+														</select>
+													</div>
+												</div>
+												<div style="display:flex;flex-direction:row;gap:8px;align-items:center;">
+													<label for="match_time_sun_offset">Offset</label>
+													<input type="number" step="1" id="match_time_sun_offset" v-model="store.selection.event.match.time.offset"/>
+												</div>
+											</template>
+										</div>
+									</div>
+								</div>
+								<div class="fieldset" style="margin-bottom:16px;">
+									<h4>Sound File</h4>
+									<div style="display:flex;flex-direction:column;gap:16px;width:100%;">
+										<div style="display:flex;flex-direction:column;gap:4px;align-items:flex-start;">
+											<label for="file_relative">Relative to</label>
+											<div class="select-container">
+												<select id="file_relative" v-model="store.selection.event.file.relative_to">
+													<option value="clockworth">Clockworth folder</option>
+													<option value="home">User home</option>
+													<option value="root">Filesystem root</option>
+												</select>
+											</div>
+										</div>
+										<div style="display:flex;flex-direction:column;gap:4px;align-items:flex-start;">
+											<label for="file_path">Path</label>
+											<input type="text" id="file_path" v-model="store.selection.event.file.path" style="width:100%;"/>
+										</div>
+									</div>
+								</div>
+							</template>
 						</div>
 					</div>
 					<div style="display:flex;flex-direction:row;justify-content:flex-end;">
@@ -723,20 +999,22 @@
 								</fieldset>
 								<div style="display:flex;flex-direction:column;gap:8px;padding:8px;">
 									<label for="newevent_parent">Parent</label>
-									<select
-										id="newevent_parent"
-										name="newevent_parent"
-										:value="(store.selection.event == null ? -1 : (store.selection.event.type=='group' ? store.selection.path.length-1 : store.selection.path.length-2))"
-									>
-										<option value="-1" data-path="[]">(Root)</option>
-										<template v-for="(item, i) in store.selection.path">
-											<option
-												v-if="item.event.type=='group'"
-												:value="i"
-												:data-path="JSON.stringify(store.cleanPath().slice(0,i+1))"
-											>{{ item.event.label }}</option>
-										</template>
-									</select>
+									<div class="select-container">
+										<select
+											id="newevent_parent"
+											name="newevent_parent"
+											:value="(store.selection.event == null ? -1 : (store.selection.event.type=='group' ? store.selection.path.length-1 : store.selection.path.length-2))"
+										>
+											<option value="-1" data-path="[]">(Root)</option>
+											<template v-for="(item, i) in store.selection.path">
+												<option
+													v-if="item.event.type=='group'"
+													:value="i"
+													:data-path="JSON.stringify(store.cleanPath().slice(0,i+1))"
+												>{{ item.event.label }}</option>
+											</template>
+										</select>
+									</div>
 								</div>
 								<div style="display:flex;flex-direction:column;gap:8px;padding:8px;margin-bottom:16px;">
 									<label for="newevent_label">Label</label>
@@ -864,12 +1142,18 @@ const store = reactive({
     }
     store.modal.cancelLabel = cancelLabel;
     store.modal.buttonLabel = buttonLabel;
+    document.body.style.position = "fixed";
+    document.body.style.width = "100vw";
+    document.body.style.top = "-"+store.modal.scroll+"px";
   },
   // Hide modal
   hideModal() {
     store.modal.show = false;
     store.modal.title = "";
     store.modal.confirmFunction = null;
+    document.body.style.position = "";
+    document.body.style.width = "";
+    window.scrollTo(0,store.modal.scroll);
   },
   // Add new chime event
   newEvent() {
@@ -901,9 +1185,25 @@ const store = reactive({
           newObject.members = [];
         } else {
           newObject.sequence = 1;
-          newObject.match = {};
-          newObject.file = {};
-          //FIXME
+          newObject.match = {
+            date: {
+              type: 'all'
+            },
+            time: {
+              type: 'specify',
+              hour: {
+                type: 'all'
+              },
+              minute: {
+                type: 'specify',
+                value: 0
+              }
+            }
+          };
+          newObject.file = {
+            relative_to: 'clockworth',
+            path: 'sounds/drafts/westminster_15.wav'
+          };
         }
         // insert into parent list
         parent[prop].push(newObject);
@@ -990,6 +1290,131 @@ const store = reactive({
       store.conf.events[index] = swap;
     }
     pathEnd.index++;
+  },
+  // Create or remove parts of the config data structure as appropriate in response to changes
+  // (This is not a pretty implementation. More time could be spent to design something more elegant...)
+  updateConf(event) {
+    switch (event.match.date.type) {
+      case 'all':
+        if (typeof event.match.date.month !== "undefined") {
+          delete event.match.date.month;
+        }
+        if (typeof event.match.date.day !== "undefined") {
+          delete event.match.date.day;
+        }
+        if (typeof event.match.date.variant !== "undefined") {
+          delete event.match.date.variant;
+        }
+      break;
+      case 'specify':
+        if (typeof event.match.date.month !== "object") {
+          event.match.date.month = {
+            type: 'specify',
+            value: 'Jan'
+          };
+        }
+        if (typeof event.match.date.day !== "object") {
+          event.match.date.day = {
+            type: 'fixed',
+            value: 1
+          };
+        }
+        if (typeof event.match.date.variant !== "undefined") {
+          delete event.match.date.variant;
+        }
+        switch (event.match.date.day.type) {
+          case 'fixed':
+            if (typeof event.match.date.day.value !== "number") {
+              event.match.date.day.value = 1;
+            }
+            if (typeof event.match.date.day.ordinal !== "undefined") {
+              delete event.match.date.day.ordinal;
+            }
+          break;
+          case 'floating':
+            if (typeof event.match.date.day.value !== "string") {
+              event.match.date.day.value = "Sun";
+            }
+            if (typeof event.match.date.day.ordinal !== "number") {
+              event.match.date.day.ordinal = 1;
+            }
+          break;
+        }
+      break;
+      case 'easter':
+        if (typeof event.match.date.month !== "undefined") {
+          delete event.match.date.month;
+        }
+        if (typeof event.match.date.day !== "undefined") {
+          delete event.match.date.day;
+        }
+        if (typeof event.match.date.variant !== "string") {
+          event.match.date.variant = 'western';
+        }
+      break;
+    }
+    switch (event.match.time.type) {
+      case 'specify':
+        if (typeof event.match.time.hour !== "object") {
+          event.match.time.hour = {
+            type: 'all',
+          };
+        }
+        if (typeof event.match.time.minute !== "object") {
+          event.match.time.minute = {
+            type: 'specify',
+            value: 0
+          };
+        }
+        if (typeof event.match.time.event !== "undefined") {
+          delete event.match.time.event;
+        }
+        if (typeof event.match.time.offset !== "undefined") {
+          delete event.match.time.offset;
+        }
+        switch (event.match.time.hour.type) {
+          case 'all':
+            if (typeof event.match.time.hour.format !== "undefined") {
+              delete event.match.time.hour.format;
+            }
+            if (typeof event.match.time.hour.value !== "undefined") {
+              delete event.match.time.hour.value;
+            }
+          break;
+          case 'specify':
+            if (typeof event.match.time.hour.format !== "string") {
+              event.match.time.hour.format = 'meridian';
+            }
+            if (typeof event.match.time.hour.value !== "number") {
+              event.match.time.hour.value = 12;
+            }
+            switch (event.match.time.hour.format) {
+              case 'meridian':
+                if (event.match.time.hour.value < 1) {
+                  event.match.time.hour.value += 12;
+                } else if (event.match.time.hour.value > 12) {
+                  event.match.time.hour.value -= 12;
+                }
+              break;
+            }
+          break;
+        }
+      break;
+      case 'sun':
+        if (typeof event.match.time.hour !== "undefined") {
+          delete event.match.time.hour;
+        }
+        if (typeof event.match.time.minute !== "undefined") {
+          delete event.match.time.minute;
+        }
+        if (typeof event.match.time.event !== "string") {
+          event.match.time.event = 'rise';
+        }
+        if (typeof event.match.time.offset !== "number") {
+          event.match.time.offset = 0;
+        }
+      break;
+    }
   },
 });
 
