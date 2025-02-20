@@ -341,6 +341,19 @@
 				display: flex;
 				flex-direction: column;
 				gap: 16px;
+				margin-bottom: 16px;
+			}
+			#world_map {
+				background-color: #2c2c2c;
+				background-image: url('img/world_map.svg');
+				background-size: 100%;
+				box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+				padding: 0;
+				border-radius: 4px;
+				overflow: hidden;
+				margin: 0;
+				width: 800px;
+				height: 400px;
 			}
 			
 			/* input toggle */
@@ -764,6 +777,8 @@
 										</div>
 									</div>
 								</div>
+								<div id="world_map">
+								</div>
 							</template>
 							<template v-else-if="store.selection.event.type == 'group'">
 								<p style="font-style:italic;">Contains {{ getEventCount(store.selection.event) }} chime events.</p>
@@ -948,7 +963,7 @@
 										</div>
 									</div>
 								</div>
-								<div class="fieldset" style="margin-bottom:16px;">
+								<div class="fieldset">
 									<h4>Sound File</h4>
 									<div style="display:flex;flex-direction:column;gap:16px;width:100%;">
 										<div style="display:flex;flex-direction:column;gap:4px;align-items:flex-start;">
@@ -1524,6 +1539,28 @@ const store = reactive({
     },
     set: (newLonDir) => {
       store.coords.lonDir = newLonDir;
+      store.setCoordinates();
+    },
+  }),
+  latitudeSigned: computed({
+    get: () => {
+      store.getCoordinates();
+      return Number(store.coords.lat) * (store.coords.latDir == 'N' ? 1.0 : -1.0);
+    },
+    set: (newLat) => {
+      store.coords.lat = Math.abs(newLat);
+      store.coords.latDir = (newLat >= 0 ? 'N' : 'S');
+      store.setCoordinates();
+    },
+  }),
+  longitudeSigned: computed({
+    get: () => {
+      store.getCoordinates();
+      return Number(store.coords.lon) * (store.coords.lonDir == 'E' ? 1.0 : -1.0);
+    },
+    set: (newLon) => {
+      store.coords.lon = Math.abs(newLon);
+      store.coords.lonDir = (newLon >= 0 ? 'E' : 'W');
       store.setCoordinates();
     },
   }),
