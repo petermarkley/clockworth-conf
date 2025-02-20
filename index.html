@@ -338,6 +338,9 @@
 			}
 			#properties {
 				min-height: 300px;
+				display: flex;
+				flex-direction: column;
+				gap: 16px;
 			}
 			
 			/* input toggle */
@@ -473,6 +476,7 @@
 				box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
 				padding: 8px;
 				border-radius: 4px;
+				box-sizing: border-box;
 			}
 			label {
 				font-size: 14px;
@@ -834,8 +838,22 @@
 										</div>
 									</div>
 								</div>
-								<div>
+								<div class="fieldset" style="margin-bottom:16px;">
 									<h4>Sound File</h4>
+									<div style="display:flex;flex-direction:column;gap:16px;width:100%;">
+										<div style="display:flex;flex-direction:column;gap:4px;align-items:flex-start;">
+											<label for="file_relative">Relative to</label>
+											<select id="file_relative" v-model="store.selection.event.file.relative_to" style="width:100%;">
+												<option value="clockworth">Clockworth folder</option>
+												<option value="home">User home</option>
+												<option value="root">Filesystem root</option>
+											</select>
+										</div>
+										<div style="display:flex;flex-direction:column;gap:4px;align-items:flex-start;">
+											<label for="file_path">Path</label>
+											<input type="text" id="file_path" v-model="store.selection.event.file.path" style="width:100%;"/>
+										</div>
+									</div>
 								</div>
 							</template>
 						</div>
