@@ -189,7 +189,28 @@ const store = reactive({
   },
   // Move chime event upward in hierarchy
   decreaseIndent() {
-    alert("decrease indent");
+    if (store.selection.event === null || store.selection.path.length < 2) {
+      return;
+    }
+    const pathEnd = store.selection.path[store.selection.path.length-1];
+    const index = pathEnd.index;
+    const pathPrev = store.selection.path[store.selection.path.length-2];
+    let indexPrev = pathPrev.index;
+    const item = pathEnd.event;
+    pathPrev.event.members.splice(index, 1);
+    let hasNextSibling = null;
+    if (store.selection.path.length > 2) {
+      const parent = store.selection.path[store.selection.path.length-3].event;
+      parent.members.splice(indexPrev+1, 0, item);
+      hasNextSibling = (indexPrev+1 < parent.members.length-1);
+    } else {
+      store.conf.events.splice(indexPrev+1, 0, item);
+      hasNextSibling = (indexPrev+1 < store.conf.events.length-1);
+    }
+    store.selection.path.splice(-2, 1);
+    indexPrev++;
+    store.selection.path[store.selection.path.length-1].index = indexPrev;
+    store.selection.path[store.selection.path.length-1].hasNextSibling = hasNextSibling;
   },
   // Move chime event downward in hierarchy
   increaseIndent() {

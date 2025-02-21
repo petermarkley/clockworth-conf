@@ -73,7 +73,7 @@
 								</button>
 								<button
 									id="toolbar_unindent"
-									:disabled="!store.selection.event || store.selection.path.length == 0"
+									:disabled="!store.selection.event || store.selection.path.length < 2"
 									@click="store.decreaseIndent"
 									title="Decrease indent"
 								>
