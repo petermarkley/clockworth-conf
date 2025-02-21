@@ -1,4 +1,4 @@
-import { createApp, ref, reactive, computed } from 'https://unpkg.com/vue@3.5.13/dist/vue.esm-browser.js'
+import { createApp, ref, reactive, computed } from 'https://unpkg.com/vue@3.5.13/dist/vue.esm-browser.prod.js'
 
 const store = reactive({
   // This is the payload that this widget exists to build, the Clockworth config data
