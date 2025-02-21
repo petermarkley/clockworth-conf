@@ -1,6 +1,8 @@
 # Clockworth Configurator
 Widget for configuring your own [Clockworth robotic clock](https://github.com/petermarkley/clockworth).
 
+This is hosted live at [petermarkley.com/clockworth-conf/](https://petermarkley.com/clockworth-conf/).
+
 ![Clockworth Configurator](img/screenshots/2025-02-20.png)
 
 # Details
