@@ -212,9 +212,65 @@ const store = reactive({
     store.selection.path[store.selection.path.length-1].index = indexPrev;
     store.selection.path[store.selection.path.length-1].hasNextSibling = hasNextSibling;
   },
+  // Return true if object can increase indent, otherwise false
+  canIndent() {
+    if (store.selection.event === null) {
+      return false;
+    }
+    const pathEnd = store.selection.path[store.selection.path.length-1];
+    const index = pathEnd.index;
+    if (index < 1) {
+      return false;
+    }
+    let prevSibling = null;
+    if (store.selection.path.length > 1) {
+      const parent = store.selection.path[store.selection.path.length-2].event;
+      prevSibling = parent.members[index-1];
+    } else {
+      prevSibling = store.conf.events[index-1];
+    }
+    return (prevSibling.type == 'group');
+  },
   // Move chime event downward in hierarchy
   increaseIndent() {
-    alert("increase indent");
+    if (store.selection.event === null) {
+      return;
+    }
+    const pathEnd = store.selection.path[store.selection.path.length-1];
+    const index = pathEnd.index;
+    if (index < 1) {
+      return;
+    }
+    let prevSibling = null;
+    let hasNextSibling = null;
+    if (store.selection.path.length > 1) {
+      const parent = store.selection.path[store.selection.path.length-2].event;
+      prevSibling = parent.members[index-1];
+      if (prevSibling.type != 'group') {
+        return;
+      }
+      const item = store.selection.event;
+      parent.members.splice(index, 1);
+      prevSibling.members.push(item);
+      hasNextSibling = (index < parent.members.length);
+    } else {
+      prevSibling = store.conf.events[index-1];
+      if (prevSibling.type != 'group') {
+        return;
+      }
+      const item = store.selection.event;
+      store.conf.events.splice(index, 1);
+      prevSibling.members.push(item);
+      hasNextSibling = (index < store.conf.events.length);
+    }
+    store.selection.path.splice(-1,0, {
+      event: prevSibling,
+      hasNextSibling: hasNextSibling,
+      index: index-1,
+      label: prevSibling.label,
+    });
+    store.selection.path[store.selection.path.length-1].index = prevSibling.members.length-1;
+    store.selection.path[store.selection.path.length-1].hasNextSibling = false;
   },
   // Move selected chime event upward in list
   moveUpward() {

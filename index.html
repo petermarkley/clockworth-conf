@@ -81,7 +81,7 @@
 								</button>
 								<button
 									id="toolbar_indent"
-									:disabled="!store.selection.event"
+									:disabled="!store.selection.event || !store.canIndent()"
 									@click="store.increaseIndent"
 									title="Increase indent"
 								>
